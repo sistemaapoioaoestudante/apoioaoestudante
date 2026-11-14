@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apoio ao Estudante</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <!-- "Adicionar a tela inicial" no celular: abre como aplicativo -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#3730a3" />
+    <!-- Estilos divididos por assunto - ver public/css/tokens.css para as cores -->
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/screens.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/accessibility.css" />
+  </head>
+  <body class="login-mode">
+    <section class="login-screen" id="loginScreen">
+      <div class="login-panel">
+        <div class="login-copy">
+          <div class="brand login-brand">
+            <div class="brand-mark">AE</div>
+            <div>
+              <strong>Apoio ao Estudante</strong>
+              <span>Planejamento inclusivo</span>
+            </div>
+          </div>
+          <div>
+            <p class="eyebrow">Educação infantil: Pré I e Jardim</p>
+            <h1>Atividades inclusivas pensadas para cada criança.</h1>
+          </div>
+          <ul class="login-highlights">
+            <li><span aria-hidden="true">🎨</span>3 atividades adaptadas ao perfil de cada aluno</li>
+            <li><span aria-hidden="true">🧩</span>Ligadas aos objetivos da BNCC</li>
+            <li><span aria-hidden="true">🔒</span>Dados protegidos: a IA roda aqui na escola</li>
+          </ul>
+        </div>
+
+        <form class="login-card" id="loginForm">
+          <h2>Entrar</h2>
+
+          <label>
+            E-mail
+            <input id="loginEmail" type="email" autocomplete="username" required placeholder="seuemail@escola.com" aria-describedby="loginError" />
+          </label>
+
+          <label>
+            Senha
+            <input id="loginPassword" type="password" autocomplete="current-password" required aria-describedby="loginError loginHelp" />
+          </label>
+
+          <p class="login-error" id="loginError" role="alert"></p>
+          <button class="primary-action" type="submit" id="loginSubmit">Entrar</button>
+          <p class="hint-text" id="loginHelp">Esqueceu a senha? Peça para a coordenação criar uma senha provisória.</p>
+        </form>
+      </div>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
+      <button class="mobile-nav-toggle" type="button" id="mobileNavToggle" aria-expanded="false" aria-controls="sidebar"><span aria-hidden="true">☰</span> Menu</button>
+
+      <aside class="sidebar" id="sidebar" aria-label="Navegação principal">
+        <div class="brand">
+          <div class="brand-mark">AE</div>
+          <div>
+            <strong>Apoio ao Estudante</strong>
+            <span>Planejamento inclusivo</span>
+          </div>
+        </div>
+
+        <!-- Titulo, icone e subtitulo de cada pagina ficam em js/uiText.js.
+             data-role: quem ve o item (teacher = professora, admin = coordenacao). -->
+        <nav class="nav-list" aria-label="Páginas do sistema">
+          <button class="nav-item" type="button" data-view="dashboard" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">📊</span>Painel</button>
+          <button class="nav-item" type="button" data-view="quick" data-role="teacher" hidden><span class="nav-icon" aria-hidden="true">✨</span>Atendimento rápido</button>
+          <button class="nav-item" type="button" data-view="students" data-role="teacher" hidden><span class="nav-icon" aria-hidden="true">🧒</span>Meus alunos</button>
+          <button class="nav-item" type="button" data-view="classes" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">🏫</span>Turmas</button>
+          <button class="nav-item" type="button" data-view="teachers" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">👩‍🏫</span>Professoras</button>
+          <button class="nav-item" type="button" data-view="studentsAdmin" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">🧒</span>Alunos</button>
+          <button class="nav-item" type="button" data-view="needs" data-role="teacher admin" hidden><span class="nav-icon" aria-hidden="true">📚</span>Deficiências</button>
+          <button class="nav-item" type="button" data-view="history" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">🕘</span>Histórico</button>
+          <button class="nav-item" type="button" data-view="ai" data-role="admin" hidden><span class="nav-icon" aria-hidden="true">🤖</span>IA</button>
+          <button class="nav-item" type="button" data-view="teacher" data-role="teacher admin" hidden><span class="nav-icon" aria-hidden="true">🙋</span>Meu perfil</button>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div class="page-heading">
+            <span class="page-icon" id="pageIcon" aria-hidden="true">✨</span>
+            <div>
+              <!-- tabindex="-1": ao trocar de pagina pelo menu, o foco vem para
+                   ca e o leitor de tela anuncia o titulo da pagina nova -->
+              <h1 id="pageTitle" tabindex="-1">Atendimento rápido</h1>
+              <p class="page-subtitle" id="pageSubtitle"></p>
+            </div>
+          </div>
+          <div class="session-card">
+            <!-- Foto de perfil (ou as iniciais, se nao houver foto) -->
+            <div class="avatar" id="currentUserInitials" aria-hidden="true">—</div>
+            <div class="session-who">
+              <strong id="currentUserName">—</strong>
+              <span id="currentUserRole">Professora</span>
+            </div>
+            <!-- "Trocar senha" fica em Meu perfil -->
+            <button class="secondary-action small-action" type="button" id="logoutButton">Sair</button>
+          </div>
+        </header>
+
+        <!-- Avisos flutuantes: as duas regioes ficam sempre na pagina (vazias
+             quando nao ha aviso) para o leitor de tela anunciar o texto novo.
+             Sucesso = status (educado); erro = alert (interrompe). -->
+        <div id="toast" class="toast-region" role="status" aria-live="polite"></div>
+        <div id="toastAlert" class="toast-region" role="alert"></div>
+
+        <section id="quick" class="view">
+          <details class="how-it-works">
+            <summary><span aria-hidden="true">💡</span> Como funciona?</summary>
+            <ol>
+              <li><span class="step-number" aria-hidden="true">1</span><div><strong>Informe o contexto</strong><p>Turma, aluno, tema do dia e objetivo da BNCC.</p></div></li>
+              <li><span class="step-number" aria-hidden="true">2</span><div><strong>Receba 3 ideias</strong><p>A IA cria atividades diferentes, uma de cada vez.</p></div></li>
+              <li><span class="step-number" aria-hidden="true">3</span><div><strong>Aplique e registre</strong><p>Escolha uma, aplique e conte como foi.</p></div></li>
+            </ol>
+          </details>
+
+          <div class="work-grid">
+            <section class="panel planner-panel">
+              <div class="panel-title">
+                <div>
+                  <p class="eyebrow">Passo 1</p>
+                  <h2>Para quem é a atividade?</h2>
+                </div>
+              </div>
+
+              <form id="plannerForm" class="planner-form">
+                <label>
+                  Turma
+                  <select id="classSelect"></select>
+                </label>
+
+                <label>
+                  Aluno
+                  <select id="studentSelect"></select>
+                </label>
+
+                <div class="full-row">
+                  <label for="themeInput">Tema do dia</label>
+                  <input id="themeInput" type="text" placeholder="Ex: animais, cores, família..." maxlength="120" />
+                  <div class="theme-chips" id="themeChips" role="group" aria-label="Sugestões de tema"></div>
+                </div>
+
+                <label class="bncc-field full-row">
+                  Objetivo da BNCC
+                  <select id="bnccSelect"></select>
+                </label>
+                <p class="bncc-description" id="bnccDescription" aria-live="polite"></p>
+
+                <button class="primary-action generate-button" type="submit" id="generateActivitiesButton">Gerar 3 atividades</button>
+              </form>
+            </section>
+
+            <!-- Sem aria-live de proposito: o painel inteiro (perfil + historico)
+                 era lido de novo a cada troca de aluno ou observacao salva -->
+            <section class="panel student-summary" aria-label="Perfil do aluno">
+              <p class="eyebrow">Perfil do aluno</p>
+              <div id="studentSummary"></div>
+              <p class="empty-hint" id="studentSummaryEmpty">Selecione uma turma e um aluno para ver o perfil pedagógico aqui.</p>
+            </section>
+          </div>
+
+          <section class="suggestions-section">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Passo 2</p>
+                <!-- tabindex="-1": recebe o foco quando o painel de resultado some -->
+                <h2 id="suggestionsTitle" tabindex="-1">Ideias de atividades</h2>
+              </div>
+              <p id="suggestionsSubtitle"></p>
+            </div>
+            <p class="shared-objective" id="sharedObjective" hidden></p>
+            <p class="ai-status-line" id="activitiesSourceLine" role="status" aria-live="polite" hidden></p>
+            <div id="activitiesGrid" class="activities-grid"></div>
+            <p class="empty-hint" id="activitiesEmpty">Escolha um aluno e clique em “Gerar 3 atividades”. As ideias aparecem aqui.</p>
+
+            <article class="assignment-panel" id="assignmentPanel" hidden>
+              <div class="assignment-head">
+                <span class="activity-type" id="assignmentType"></span>
+                <span class="badge"><span aria-hidden="true">⏳</span> Em andamento</span>
+              </div>
+              <h3 id="assignmentTitle" tabindex="-1"></h3>
+              <div class="resource-box" id="assignmentResource"></div>
+              <p><strong>Como aplicar:</strong> <span id="assignmentMethod"></span></p>
+              <p><strong>Adaptação:</strong> <span id="assignmentAdaptation"></span></p>
+              <label class="assignment-notes-label">
+                Observações do retorno (opcional)
+                <textarea id="assignmentNotes" maxlength="1000" rows="3" placeholder="Ex: participou com apoio visual, evitou som alto, precisou de pausa..."></textarea>
+              </label>
+              <div class="dialog-actions assignment-actions">
+                <button class="secondary-action" type="button" data-resolve="Não funcionou">Não funcionou</button>
+                <button class="secondary-action" type="button" data-resolve="Funcionou parcialmente">Funcionou parcialmente</button>
+                <button class="primary-action" type="button" data-resolve="Funcionou bem">Funcionou bem</button>
+              </div>
+              <button class="text-action" type="button" id="cancelAssignment">Desistir desta atividade (sem registrar resultado)</button>
+            </article>
+          </section>
+        </section>
+
+        <!-- ===== Professora: alunos das turmas dela ===== -->
+        <section id="students" class="view">
+          <div class="list-controls">
+            <input type="search" id="studentsSearch" placeholder="Buscar aluno pelo nome" aria-label="Buscar aluno pelo nome" />
+            <select id="studentsClassFilter" aria-label="Filtrar por turma"><option value="">Todas as turmas</option></select>
+            <select id="studentsNeedFilter" aria-label="Filtrar por deficiência"><option value="">Todas as deficiências</option></select>
+          </div>
+          <p class="list-count" id="studentsCount" aria-live="polite"></p>
+          <div id="studentsGrid" class="grouped-list"></div>
+        </section>
+
+        <!-- ===== Deficiências (professora consulta; coordenação cadastra) ===== -->
+        <section id="needs" class="view">
+          <div class="section-heading">
+            <p class="ai-status-line" id="aiStatusLine"></p>
+            <div class="heading-actions">
+              <button class="primary-action" type="button" id="addNeedButton"><span aria-hidden="true">＋</span> Cadastrar deficiência</button>
+            </div>
+          </div>
+          <div class="list-controls">
+            <input type="search" id="needsSearch" placeholder="Buscar deficiência" aria-label="Buscar deficiência pelo nome" />
+            <select id="needsFilter" aria-label="Filtrar deficiências">
+              <option value="">Todas</option>
+              <option value="withStudents">Com alunos</option>
+              <option value="draft">Rascunhos (a completar)</option>
+            </select>
+          </div>
+          <p class="list-count" id="needsCount" aria-live="polite"></p>
+          <div id="needsGrid" class="needs-grid"></div>
+        </section>
+
+        <!-- ===== Meu perfil (professora e coordenação) ===== -->
+        <section id="teacher" class="view">
+          <div class="panel profile-panel">
+            <div class="profile-head">
+              <div class="profile-photo" id="profilePhoto" aria-hidden="true">—</div>
+              <div>
+                <p class="eyebrow" id="profileRoleLabel">Professora</p>
+                <h2 id="teacherName">—</h2>
+                <p class="muted" id="profileEmail"></p>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <label class="secondary-action file-action">
+                <span aria-hidden="true">📷</span> Escolher foto
+                <input type="file" id="profilePhotoInput" accept="image/jpeg,image/png,image/webp" class="visually-hidden" />
+              </label>
+              <button class="text-action" type="button" id="removePhotoButton" hidden>Remover foto</button>
+              <button class="primary-action" type="button" id="changePasswordButton">Trocar senha</button>
+            </div>
+            <p class="hint-text">A foto aparece só para a equipe, no topo da tela. Use uma foto sua (nunca de alunos).</p>
+            <div id="teacherStats" class="teacher-stats"></div>
+            <div id="profileClasses"></div>
+          </div>
+
+          <!-- Só para a coordenação: como liberar o acesso das professoras
+               pelo celular (Tailscale). Lógica em js/accessGuide.js -->
+          <div class="panel access-guide" id="accessGuide" hidden>
+            <h2 class="title-sm">Acesso das professoras pelo celular</h2>
+            <p class="hint-text">As professoras entram por uma rede privada e protegida (Tailscale). Cada uma precisa de um convite seu, uma única vez.</p>
+
+            <form id="accessUrlForm" class="access-url-form">
+              <label>
+                Endereço do sistema para as professoras
+                <input id="accessUrlInput" type="url" inputmode="url" placeholder="https://apoio-escola.nome-da-rede.ts.net" aria-describedby="accessUrlHelp" />
+              </label>
+              <p class="hint-text" id="accessUrlHelp">É o endereço que aparece no Tailscale para o computador do sistema. Só muda se o sistema for instalado com outro nome de computador ou outra conta.</p>
+              <button type="submit" class="secondary-action small-action">Salvar endereço</button>
+            </form>
+
+            <div class="access-actions">
+              <a class="primary-action" id="openTailscaleAdmin" href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer">
+                Abrir o Tailscale para compartilhar <span class="visually-hidden">(abre em nova aba)</span>
+              </a>
+              <button type="button" class="secondary-action" id="copyTeacherMessage">Copiar mensagem para a professora</button>
+            </div>
+            <p class="access-status" id="accessGuideStatus" role="status"></p>
+
+            <div class="access-steps">
+              <div>
+                <h3 class="title-sm">1. Você (coordenação), para cada professora</h3>
+                <ol>
+                  <li>Cadastre a professora em <strong>Professoras</strong> (o e-mail e a senha provisória do sistema).</li>
+                  <li>Clique em <strong>Abrir o Tailscale para compartilhar</strong> e entre com a conta da escola.</li>
+                  <li>Na lista ("Machines"), ache o computador <strong>apoio-escola</strong> (o computador onde o sistema roda — não os celulares).</li>
+                  <li>Clique nos três pontinhos (…) → <strong>Share…</strong> ("Compartilhar") → <strong>Generate &amp; copy invite link</strong> ("Gerar e copiar link de convite"). Cada link vale para <strong>uma</strong> pessoa. Se aparecer só um código, o link é <code>https://login.tailscale.com/admin/invite/</code> seguido do código.</li>
+                  <li>Clique em <strong>Copiar mensagem para a professora</strong>, cole no WhatsApp e cole o link do convite no lugar indicado.</li>
+                </ol>
+              </div>
+              <div>
+                <h3 class="title-sm">2. A professora, uma única vez</h3>
+                <ol>
+                  <li>Instala o app <strong>Tailscale</strong> e entra com o e-mail dela.</li>
+                  <li>Abre o link do convite <strong>com a conta dela</strong> e toca em <strong>Accept invite</strong> ("Aceitar convite"). Com a conta da escola o convite é recusado: ela já é dona do computador.</li>
+                  <li>Deixa o Tailscale <strong>conectado</strong> e abre o endereço do sistema no navegador.</li>
+                  <li>Entra com o e-mail e a senha provisória <strong>do sistema</strong> e cria a senha dela.</li>
+                </ol>
+              </div>
+            </div>
+            <p class="hint-text">Professora saiu da escola? No Tailscale, em "Sharing", clique em <strong>Revoke</strong> ("Revogar") e exclua a conta dela em Professoras.</p>
+          </div>
+        </section>
+
+        <!-- ===== Coordenação: painel ===== -->
+        <section id="dashboard" class="view">
+          <div id="dashboardContent"></div>
+        </section>
+
+        <!-- ===== Coordenação: turmas ===== -->
+        <section id="classes" class="view">
+          <div class="section-heading">
+            <p class="muted" id="schoolYearLine"></p>
+            <div class="heading-actions">
+              <button class="secondary-action small-action" type="button" id="rolloverButton">Virar o ano letivo</button>
+              <button class="primary-action small-action" type="button" id="addClassButton"><span aria-hidden="true">＋</span> Nova turma</button>
+            </div>
+          </div>
+          <div class="list-controls">
+            <input type="search" id="classesSearch" placeholder="Buscar turma" aria-label="Buscar turma pelo nome" />
+            <select id="classesYearFilter" aria-label="Ano letivo"></select>
+            <select id="classesLevelFilter" aria-label="Filtrar por nível">
+              <option value="">Todos os níveis</option>
+              <option value="Jardim">Jardim</option>
+              <option value="Pré I">Pré I</option>
+            </select>
+          </div>
+          <p class="list-count" id="classesCount" aria-live="polite"></p>
+          <div id="classesTable" class="cards-grid"></div>
+        </section>
+
+        <!-- ===== Coordenação: professoras e contas da coordenação ===== -->
+        <section id="teachers" class="view">
+          <div class="section-heading">
+            <span></span>
+            <div class="heading-actions">
+              <button class="primary-action small-action" type="button" id="addTeacherButton"><span aria-hidden="true">＋</span> Nova professora</button>
+            </div>
+          </div>
+          <div class="list-controls">
+            <input type="search" id="teachersSearch" placeholder="Buscar professora" aria-label="Buscar professora pelo nome ou e-mail" />
+            <select id="teachersClassFilter" aria-label="Filtrar por turma"><option value="">Todas as turmas</option></select>
+          </div>
+          <p class="list-count" id="teachersCount" aria-live="polite"></p>
+          <div id="teachersTable" class="cards-grid"></div>
+
+          <div class="panel coordinators-panel">
+            <div class="panel-title">
+              <div>
+                <h2 class="title-sm">Contas da coordenação</h2>
+                <p class="hint-text">Tenha pelo menos duas: se alguém esquecer a senha, a outra pessoa redefine.</p>
+              </div>
+              <button class="secondary-action small-action" type="button" id="addCoordinatorButton"><span aria-hidden="true">＋</span> Nova conta</button>
+            </div>
+            <div id="coordinatorsTable" class="simple-table"></div>
+          </div>
+        </section>
+
+        <!-- ===== Coordenação: alunos (com dados pessoais) ===== -->
+        <section id="studentsAdmin" class="view">
+          <div class="section-heading">
+            <span></span>
+            <div class="heading-actions">
+              <button class="primary-action small-action" type="button" id="addStudentButton"><span aria-hidden="true">＋</span> Novo aluno</button>
+            </div>
+          </div>
+          <div class="list-controls">
+            <input type="search" id="adminStudentsSearch" placeholder="Buscar aluno pelo nome" aria-label="Buscar aluno pelo nome" />
+            <select id="adminStudentsClassFilter" aria-label="Filtrar por turma"><option value="">Todas as turmas</option></select>
+            <select id="adminStudentsNeedFilter" aria-label="Filtrar por deficiência"><option value="">Todas as deficiências</option></select>
+            <select id="adminStudentsStatusFilter" aria-label="Filtrar por situação">
+              <option value="ativo">Ativos</option>
+              <option value="">Todas as situações</option>
+              <option value="transferido">Transferidos</option>
+              <option value="concluiu">Concluíram</option>
+              <option value="saiu">Saíram</option>
+            </select>
+          </div>
+          <p class="list-count" id="adminStudentsCount" aria-live="polite"></p>
+          <div id="adminGrid" class="grouped-list"></div>
+        </section>
+
+        <!-- ===== Coordenação: histórico de alterações ===== -->
+        <section id="history" class="view">
+          <form class="list-controls history-filters" id="historyFilters">
+            <input type="search" id="historySearch" placeholder="Buscar no histórico" aria-label="Buscar no histórico" />
+            <select id="historyPerson" aria-label="Pessoa"><option value="">Todas as pessoas</option></select>
+            <select id="historyAction" aria-label="Ação"><option value="">Todas as ações</option></select>
+            <select id="historyEntity" aria-label="Assunto"><option value="">Todos os assuntos</option></select>
+            <label class="inline-field">De <input type="date" id="historyFrom" /></label>
+            <label class="inline-field">Até <input type="date" id="historyTo" /></label>
+            <button type="button" class="text-action" id="historyClear">Limpar filtros</button>
+          </form>
+          <p class="list-count" id="historyCount" aria-live="polite"></p>
+          <div id="historyTable"></div>
+          <div class="pager" id="historyPager"></div>
+        </section>
+
+        <!-- ===== Coordenação: IA ===== -->
+        <section id="ai" class="view">
+          <p class="hint-text">A IA roda neste computador (Ollama, gratuito) e nunca recebe dados pessoais dos alunos.</p>
+          <p class="ai-status-line" id="aiSettingsStatusLine"></p>
+
+          <form id="aiSettingsForm" class="ai-settings-form">
+            <label>
+              Provedor de IA
+              <select id="aiProviderInput">
+                <option value="">Nenhum (desativar a IA)</option>
+                <option value="ollama">Ollama (roda local, gratuito)</option>
+              </select>
+            </label>
+
+            <div id="aiOllamaFields" class="ai-provider-fields" hidden>
+              <div class="form-grid-2">
+                <label>
+                  Endereço do Ollama
+                  <input id="aiOllamaBaseUrlInput" type="text" placeholder="http://127.0.0.1:11434" />
+                </label>
+                <label>
+                  Modelo
+                  <input id="aiOllamaModelInput" type="text" placeholder="qwen2.5:7b" list="aiOllamaModelList" autocomplete="off" />
+                  <datalist id="aiOllamaModelList"></datalist>
+                </label>
+              </div>
+              <p class="hint-text">Recomendado: <strong>qwen2.5:7b</strong> (escreve melhor em português). Ao trocar de modelo, a primeira geração demora cerca de 1 minuto a mais.</p>
+              <div class="ai-model-list-actions">
+                <button type="button" class="secondary-action small-action" id="aiRefreshModelsButton">Atualizar lista de modelos instalados</button>
+                <span class="hint-text" id="aiModelListStatus" role="status"></span>
+              </div>
+              <div class="ai-model-choices" id="aiModelChoices" hidden></div>
+              <details class="ai-instructions">
+                <summary>Como conectar o Ollama</summary>
+                <ol>
+                  <li>Baixe e instale o Ollama nesta máquina em <strong>ollama.com/download</strong> (Windows, Mac ou Linux).</li>
+                  <li>Abra um terminal e rode <code>ollama pull qwen2.5:7b</code> para baixar o modelo recomendado.</li>
+                  <li>Deixe o Ollama aberto em segundo plano nesta máquina (ele fica ouvindo em <code>http://127.0.0.1:11434</code> por padrão).</li>
+                  <li>Clique em "Atualizar lista de modelos instalados" e escolha o modelo.</li>
+                </ol>
+                <p class="hint-text">Gratuito e os dados não saem desta máquina — mas exige que o Ollama fique aberto para a IA funcionar.</p>
+              </details>
+            </div>
+
+            <div class="dialog-actions">
+              <button type="submit" class="primary-action" id="aiSettingsSubmit">Salvar configuração de IA</button>
+            </div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="observationDialog" aria-labelledby="observationTitle">
+      <form method="dialog" id="observationForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Observação do aluno</p>
+            <h2 id="observationTitle">Registrar observação</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Sua observação sobre o aluno
+          <textarea id="studentObservation" maxlength="2000" autofocus rows="5" placeholder="Ex: aceita melhor atividades com começo, meio e fim visíveis..."></textarea>
+        </label>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Salvar observação</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="needObservationDialog" aria-labelledby="needObservationTitle">
+      <form method="dialog" id="needObservationForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Percepção da equipe</p>
+            <h2 id="needObservationTitle">Registrar percepção</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Sua percepção
+          <textarea id="needObservationText" maxlength="2000" autofocus rows="5" placeholder="Ex: na rotina da escola, alunos com este perfil respondem melhor quando..."></textarea>
+        </label>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Salvar percepção</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="newNeedDialog" aria-labelledby="newNeedTitle">
+      <form method="dialog" id="newNeedForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Nova deficiência</p>
+            <h2 id="newNeedTitle">Adicionar à base</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Nome da deficiência ou necessidade
+          <input id="newNeedName" autofocus type="text" placeholder="Ex: Deficiência intelectual" required />
+        </label>
+
+        <label>
+          Percepção inicial (opcional)
+          <textarea id="newNeedObservation" maxlength="2000" rows="4" placeholder="Ex: o que a equipe já percebeu sobre alunos com esse perfil"></textarea>
+        </label>
+
+        <p class="hint-text">O registro entra como rascunho — a coordenação completa estratégias, recursos e barreiras depois.</p>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Adicionar deficiência</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="classDialog" aria-labelledby="classDialogTitle">
+      <form method="dialog" id="classForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Turmas</p>
+            <h2 id="classDialogTitle">Cadastrar turma</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Nome da turma
+          <input id="classNameInput" autofocus type="text" placeholder="Ex: Jardim A" required />
+        </label>
+
+        <label>
+          Nível
+          <select id="classLevelInput">
+            <option value="Jardim">Jardim</option>
+            <option value="Pré I">Pré I</option>
+          </select>
+        </label>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action" id="classDialogSubmit">Salvar turma</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="teacherDialog" aria-labelledby="teacherDialogTitle">
+      <form method="dialog" id="teacherForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Professoras</p>
+            <h2 id="teacherDialogTitle">Cadastrar professora</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Nome completo
+          <input id="teacherNameInput" autofocus type="text" required />
+        </label>
+
+        <label>
+          E-mail de acesso
+          <input id="teacherEmailInput" type="email" required />
+        </label>
+
+        <div id="teacherPasswordFieldWrap">
+          <label>
+            Senha provisória (mínimo 8 caracteres)
+            <input id="teacherPasswordInput" type="text" autocomplete="off" aria-describedby="teacherPasswordHelp" />
+          </label>
+          <p class="hint-text field-help" id="teacherPasswordHelp">A professora troca por uma senha só dela no primeiro acesso.</p>
+        </div>
+
+        <fieldset class="checkbox-fieldset">
+          <legend>Turmas atendidas</legend>
+          <div id="teacherClassesCheckboxes" class="checkbox-grid"></div>
+        </fieldset>
+
+        <p class="hint-text" id="teacherDialogHint"></p>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action" id="teacherDialogSubmit">Salvar professora</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="teacherPasswordDialog" aria-labelledby="teacherPasswordTitle">
+      <form method="dialog" id="teacherPasswordForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Redefinir senha</p>
+            <h2 id="teacherPasswordTitle">Nova senha de acesso</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <label>
+          Senha provisória (mínimo 8 caracteres)
+          <input id="teacherNewPasswordInput" autofocus type="text" autocomplete="off" minlength="8" required aria-describedby="teacherNewPasswordHelp" />
+        </label>
+        <p class="hint-text" id="teacherNewPasswordHelp">No próximo acesso, a professora cria uma senha só dela.</p>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Salvar nova senha</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="studentDialog" class="dialog-wide" aria-labelledby="studentDialogTitle">
+      <form method="dialog" id="studentForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Alunos</p>
+            <h2 id="studentDialogTitle">Cadastrar aluno</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+
+        <div class="form-grid-2">
+          <label>
+            Nome completo
+            <input id="studentFullNameInput" autofocus type="text" required />
+          </label>
+          <label>
+            Nome de exibição (visto pela professora)
+            <input id="studentShortNameInput" type="text" placeholder="Ex: João M." required />
+          </label>
+          <label>
+            Idade
+            <input id="studentAgeInput" type="number" min="0" max="6" required />
+          </label>
+          <label>
+            Turma
+            <select id="studentClassInput"></select>
+          </label>
+        </div>
+
+        <label>
+          Deficiência / necessidade
+          <select id="studentNeedInput"></select>
+        </label>
+
+        <div class="form-grid-2">
+          <label>
+            Data de nascimento (dd/mm/aaaa)
+            <input id="studentBirthDateInput" type="text" inputmode="numeric" placeholder="Ex: 15/03/2021" required />
+          </label>
+          <label>
+            Responsável
+            <input id="studentGuardianInput" type="text" required />
+          </label>
+          <label>
+            Telefone de contato
+            <input id="studentPhoneInput" type="tel" required />
+          </label>
+        </div>
+
+        <label>
+          Perfil pedagógico (visível para a professora)
+          <textarea id="studentProfileInput" maxlength="1000" rows="3" required></textarea>
+        </label>
+
+        <fieldset class="checkbox-fieldset">
+          <legend>Pontos fortes (usados na recomendação de atividades)</legend>
+          <div id="studentStrengthsCheckboxes" class="checkbox-grid"></div>
+        </fieldset>
+
+        <fieldset class="checkbox-fieldset">
+          <legend>Cuidados (usados na recomendação de atividades)</legend>
+          <div id="studentCautionsCheckboxes" class="checkbox-grid"></div>
+        </fieldset>
+
+        <label>
+          Documentos / observações administrativas (opcional, somente coordenação)
+          <textarea id="studentDocumentsInput" maxlength="1000" rows="2"></textarea>
+        </label>
+
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action" id="studentDialogSubmit">Salvar aluno</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="confirmDialog" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+      <form method="dialog" id="confirmForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow" id="confirmEyebrow">Confirmar ação</p>
+            <h2 id="confirmTitle">Tem certeza?</h2>
+          </div>
+        </div>
+        <p id="confirmMessage"></p>
+        <div id="confirmPasswordField" hidden>
+          <label>
+            Sua senha da coordenação
+            <input id="confirmPassword" type="password" autocomplete="current-password" aria-describedby="confirmPasswordHint" />
+          </label>
+          <p class="hint-text" id="confirmPasswordHint">Confirma que é você quem está excluindo. Isso não pode ser desfeito.</p>
+        </div>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action" id="confirmCancel">Cancelar</button>
+          <button value="default" class="primary-action" id="confirmSubmit">Confirmar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Professoras de uma turma (vincular pela tela da turma) -->
+    <dialog id="classTeachersDialog" aria-labelledby="classTeachersTitle">
+      <form method="dialog" id="classTeachersForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Turmas</p>
+            <h2 id="classTeachersTitle">Professoras da turma</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+        <fieldset class="checkbox-fieldset">
+          <legend>Marque quem dá aula nesta turma</legend>
+          <div id="classTeachersCheckboxes" class="checkbox-grid"></div>
+        </fieldset>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Salvar professoras</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Situação do aluno (transferido, concluiu, saiu ou volta a ficar ativo) -->
+    <dialog id="studentStatusDialog" aria-labelledby="studentStatusTitle">
+      <form method="dialog" id="studentStatusForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Alunos</p>
+            <h2 id="studentStatusTitle">Situação do aluno</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+        <label>
+          Situação
+          <select id="studentStatusInput" autofocus>
+            <option value="ativo">Ativo (frequenta a escola)</option>
+            <option value="transferido">Transferido para outra escola</option>
+            <option value="concluiu">Concluiu a educação infantil</option>
+            <option value="saiu">Saiu da escola</option>
+          </select>
+        </label>
+        <label>
+          Observação (opcional)
+          <input id="studentStatusNote" type="text" maxlength="300" placeholder="Ex: mudou de cidade" />
+        </label>
+        <p class="hint-text">O aluno que não está ativo some das telas das professoras, mas o histórico dele continua guardado aqui.</p>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Salvar situação</button>
+        </div>
+
+        <!-- Exclusão definitiva: escondida (fechada) e com confirmação forte.
+             No dia a dia use a situação acima, que guarda o histórico. -->
+        <details class="danger-zone" id="deleteStudentZone">
+          <summary>Excluir definitivamente…</summary>
+          <p class="hint-text">Use <strong>só</strong> para cadastro feito por engano (ex: aluno duplicado) ou quando a família pedir que os dados sejam apagados (LGPD). Apaga também as atividades registradas e as observações. <strong>Não pode ser desfeito.</strong></p>
+          <!-- Dados para conferir que é a criança certa (pode haver alunos com o mesmo nome) -->
+          <p class="delete-who" id="deleteStudentWho"></p>
+          <label>
+            <span>Para confirmar, digite o nome completo do aluno: <strong id="deleteStudentExpected"></strong></span>
+            <input id="deleteStudentConfirm" type="text" autocomplete="off" aria-describedby="deleteStudentStatus" />
+          </label>
+          <label>
+            Sua senha (coordenação)
+            <input id="deleteStudentPassword" type="password" autocomplete="current-password" aria-describedby="deleteStudentStatus" />
+          </label>
+          <button type="button" class="danger-outline" id="deleteStudentButton">Excluir definitivamente</button>
+          <p class="form-error" id="deleteStudentStatus" role="alert"></p>
+        </details>
+      </form>
+    </dialog>
+
+    <!-- Virada do ano letivo -->
+    <dialog id="rolloverDialog" class="dialog-wide" aria-labelledby="rolloverTitle">
+      <form method="dialog" id="rolloverForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Ano letivo</p>
+            <h2 id="rolloverTitle">Virar o ano letivo</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+        <p id="rolloverIntro"></p>
+        <div id="rolloverPlan" class="rollover-plan"></div>
+        <p class="hint-text">As turmas e o histórico do ano que termina continuam guardados para consulta. As professoras não são copiadas: depois da virada, vincule as professoras às turmas novas.</p>
+        <label class="checkbox-option">
+          <input type="checkbox" id="rolloverConfirm" required />
+          Conferi o destino de todas as turmas e quero virar o ano letivo
+        </label>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action" id="rolloverSubmit">Virar o ano letivo</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Histórico completo de atividades registradas de um aluno -->
+    <dialog id="studentHistoryDialog" class="dialog-wide" aria-labelledby="studentHistoryTitle">
+      <form method="dialog" id="studentHistoryForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Histórico do aluno</p>
+            <h2 id="studentHistoryTitle">Atividades registradas</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+        <div class="list-controls">
+          <select id="studentHistoryResult" aria-label="Filtrar por resultado">
+            <option value="">Todos os resultados</option>
+            <option value="Funcionou bem">Funcionou bem</option>
+            <option value="Funcionou parcialmente">Funcionou parcialmente</option>
+            <option value="Não funcionou">Não funcionou</option>
+          </select>
+        </div>
+        <p class="list-count" id="studentHistoryCount" aria-live="polite"></p>
+        <div id="studentHistoryList" class="history-list-full"></div>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Fechar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Nova conta da coordenação -->
+    <dialog id="coordinatorDialog" aria-labelledby="coordinatorTitle">
+      <form method="dialog" id="coordinatorForm">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Coordenação</p>
+            <h2 id="coordinatorTitle">Nova conta da coordenação</h2>
+          </div>
+          <button class="icon-button" type="submit" formnovalidate value="cancel" aria-label="Fechar">×</button>
+        </div>
+        <label>
+          Nome
+          <input id="coordinatorNameInput" type="text" required autofocus placeholder="Ex: Direção" />
+        </label>
+        <label>
+          E-mail de acesso
+          <input id="coordinatorEmailInput" type="email" required />
+        </label>
+        <label>
+          Senha provisória (mínimo 8 caracteres)
+          <input id="coordinatorPasswordInput" type="text" autocomplete="off" minlength="8" required aria-describedby="coordinatorPasswordHelp" />
+        </label>
+        <p class="hint-text" id="coordinatorPasswordHelp">A pessoa cria uma senha só dela no primeiro acesso.</p>
+        <div class="dialog-actions">
+          <button value="cancel" type="submit" formnovalidate class="secondary-action">Cancelar</button>
+          <button value="default" class="primary-action">Criar conta</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Troca de senha (obrigatoria no 1o acesso ou voluntaria) - logica em js/passwordChange.js -->
+    <dialog id="passwordChangeDialog" aria-labelledby="passwordChangeTitle">
+      <form id="passwordChangeForm" novalidate>
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Segurança da conta</p>
+            <h2 id="passwordChangeTitle">Criar senha nova</h2>
+          </div>
+        </div>
+        <p id="passwordChangeIntro"></p>
+
+        <label>
+          Senha atual
+          <input id="passwordChangeCurrent" type="password" autocomplete="current-password" required />
+        </label>
+        <label>
+          Senha nova (mínimo 8 caracteres)
+          <input id="passwordChangeNew" type="password" autocomplete="new-password" minlength="8" required />
+        </label>
+        <label>
+          Confirme a senha nova
+          <input id="passwordChangeConfirm" type="password" autocomplete="new-password" minlength="8" required />
+        </label>
+
+        <p class="login-error" id="passwordChangeError" role="alert"></p>
+
+        <div class="dialog-actions">
+          <button type="button" class="secondary-action" id="passwordChangeCancel">Cancelar</button>
+          <button type="button" class="secondary-action" id="passwordChangeLogout" hidden>Sair</button>
+          <button type="submit" class="primary-action" id="passwordChangeSubmit">Salvar senha</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Nucleo: estado, chamadas a API, avisos (usado por todos os modulos) -->
+    <script src="js/core.js"></script>
+    <!-- Textos e apoio das telas -->
+    <script src="js/uiText.js"></script>
+    <script src="js/activityKinds.js"></script>
+    <script src="js/passwordChange.js"></script>
+    <!-- Janelas: foco de volta ao botao de origem e erros dentro da janela -->
+    <script src="js/focusReturn.js"></script>
+    <script src="js/dialogForms.js"></script>
+    <!-- Recebe as atividades da IA uma de cada vez - ver js/activityStream.js -->
+    <script src="js/activityStream.js"></script>
+    <!-- Telas por assunto (usam as funcoes gerais do js/core.js) -->
+    <script src="js/listTools.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/accessGuide.js"></script>
+    <script src="js/studentHistory.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/auditHistory.js"></script>
+    <script src="js/schoolYear.js"></script>
+    <script src="js/aiSettings.js"></script>
+    <script src="js/adminScreens.js"></script>
+    <script src="js/adminClasses.js"></script>
+    <script src="js/adminTeachers.js"></script>
+    <script src="js/adminStudents.js"></script>
+    <script src="js/quickService.js"></script>
+    <script src="js/studentsView.js"></script>
+    <script src="js/needsView.js"></script>
+    <!-- Inicio e navegacao: por ultimo, chama boot() -->
+    <script src="app.js"></script>
+  </body>
+</html>

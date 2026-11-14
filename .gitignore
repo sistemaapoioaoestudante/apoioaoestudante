@@ -1,0 +1,14 @@
+node_modules/
+*.log
+
+# Dados reais da escola (alunos, senhas) - NUNCA vao para o git
+data/
+.env
+
+# Instaladores e arquivos grandes nao pertencem ao codigo
+*.exe
+*.msi
+*.zip
+
+# Instalador gerado (publicado nas Releases, nao no codigo)
+instalador/saida/

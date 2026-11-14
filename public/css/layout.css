@@ -1,0 +1,381 @@
+/* ==========================================================================
+   Layout: estrutura da pagina (menu lateral, topo, areas de conteudo) e
+   adaptacao para tablet/celular.
+   ========================================================================== */
+
+/* ---- Estrutura geral --------------------------------------------------- */
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+main {
+  padding: 24px 32px 40px;
+  min-width: 0;
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+/* ---- Menu lateral ------------------------------------------------------ */
+
+.sidebar {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-ink);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 0 6px;
+}
+
+.brand strong,
+.brand span {
+  display: block;
+}
+
+.brand strong {
+  font-size: 17px;
+}
+
+.brand span {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.brand-mark {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--sun);
+  color: var(--primary-dark);
+  font-weight: 900;
+  font-size: 18px;
+  box-shadow: 0 4px 0 var(--sun-shadow);
+}
+
+.nav-list {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--sidebar-ink);
+  font-weight: 700;
+  font-size: 15px;
+  text-align: left;
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--sidebar-tint);
+  font-size: 17px;
+}
+
+.nav-item:hover {
+  background: var(--sidebar-hover);
+}
+
+/* Pagina atual: fundo branco, bem evidente */
+.nav-item.active {
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: 0 4px 0 var(--sun);
+}
+
+.nav-item.active .nav-icon {
+  background: var(--sun);
+}
+
+.mobile-nav-toggle {
+  display: none;
+}
+
+/* ---- Topo: titulo da pagina + sessao ------------------------------------ */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.page-icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--sun-soft);
+  border: 2px solid var(--sun);
+  font-size: 28px;
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Cartao compacto de quem esta logado */
+.session-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 10px 8px 8px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.session-card .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.session-who {
+  display: grid;
+  line-height: 1.2;
+  margin-right: 4px;
+}
+
+.session-who strong {
+  font-size: 15px;
+}
+
+.session-who span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.session-card .small-action {
+  min-height: 36px;
+  border-radius: var(--radius-pill);
+}
+
+/* ---- Cabecalho de secoes dentro da pagina -------------------------------- */
+
+.section-heading,
+.panel-title,
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-heading {
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.section-heading > p {
+  margin: 0;
+  max-width: 560px;
+  color: var(--muted);
+}
+
+.heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ---- Grades ------------------------------------------------------------- */
+
+.work-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.activities-grid,
+.students-grid,
+.admin-grid,
+.needs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.grouped-list {
+  display: grid;
+  gap: 28px;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ---- Tablet ------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .activities-grid,
+  .students-grid,
+  .admin-grid,
+  .needs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  /* A barra "Menu" fica presa no topo: ao navegar com Tab, o item em foco
+     nunca fica escondido atras dela (WCAG 2.4.11) */
+  html {
+    scroll-padding-top: 64px;
+  }
+
+  /* No celular/tablet o menu vira uma gaveta aberta pelo botao "Menu" */
+  .mobile-nav-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: var(--primary-gradient);
+    color: var(--on-primary);
+    font-weight: 800;
+    font-size: 16px;
+    padding: 12px 18px;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 22% 0 0;
+    z-index: 40;
+    transform: translateX(-100%);
+    /* Fechado, o menu fica "invisible": sem isso os botoes dele, fora da
+       tela, continuavam recebendo o foco do Tab e do leitor de tela. O
+       atraso no visibility deixa a animacao de fechar terminar antes. */
+    visibility: hidden;
+    transition: transform 0.2s ease, visibility 0s linear 0.2s;
+    overflow-y: auto;
+  }
+
+  /* Sombra so com o menu aberto (fechado, ela vazava como uma faixa na borda) */
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    /* Ao abrir, visibility muda na hora (fora da transicao): assim o foco
+       ja pode entrar no menu no mesmo instante */
+    transition: transform 0.2s ease;
+    box-shadow: 8px 0 0 var(--overlay-soft);
+  }
+
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Celular ------------------------------------------------------------ */
+
+@media (max-width: 680px) {
+  :root {
+    --h1: 24px;
+    --h2: 20px;
+  }
+
+  main {
+    padding: 14px 16px 32px;
+  }
+
+  .topbar {
+    margin-bottom: 14px;
+  }
+
+  .page-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    border-radius: 12px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  /* Sessao vira uma linha discreta abaixo do titulo */
+  .session-card {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+  }
+
+  /* Nome ocupa a 1a linha; "Trocar senha" e "Sair" descem juntos para a
+     2a (o "Sair" nunca fica sozinho numa linha) */
+  .session-who {
+    flex: 1 1 200px;
+  }
+
+  .sidebar {
+    inset: 0 12% 0 0;
+  }
+
+  .activities-grid,
+  .students-grid,
+  .admin-grid,
+  .needs-grid,
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}

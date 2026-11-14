@@ -1,0 +1,490 @@
+/* ==========================================================================
+   Telas da coordenacao e do perfil: painel, cartoes de turmas/professoras/
+   alunos, situacao do aluno, historico com filtros, foto de perfil e virada
+   de ano. Cores SO via variaveis de tokens.css.
+   ========================================================================== */
+
+/* ---- Contagem e grade de cartoes --------------------------------------------- */
+
+.list-count {
+  margin: -6px 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.list-count:empty {
+  display: none;
+}
+
+.list-controls {
+  flex-wrap: wrap;
+}
+
+.list-controls select {
+  flex: 1 1 180px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.entity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-left: 6px solid var(--primary-bright);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.entity-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.entity-card .row-actions {
+  margin-top: auto;
+}
+
+.entity-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.warning-text {
+  color: var(--orange-ink);
+  font-weight: 700;
+}
+
+.small-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* ---- Situacao do aluno ------------------------------------------------------- */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-ativo { background: var(--mint-soft); color: var(--mint-ink); }
+.status-transferido { background: var(--sun-soft); color: var(--sun-ink); }
+.status-concluiu { background: var(--sky-soft); color: var(--sky-ink); }
+.status-saiu { background: var(--coral-soft); color: var(--coral-ink); }
+
+/* Aluno que nao esta ativo: cartao mais discreto */
+.admin-card.is-inactive {
+  border-style: dashed;
+}
+
+.admin-private summary {
+  cursor: pointer;
+}
+
+/* ---- Painel ------------------------------------------------------------------- */
+
+.dashboard-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+/* Os numeros sao botoes (atalho para a tela certa) */
+.dashboard-tile {
+  min-width: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+div.dashboard-tile {
+  cursor: default;
+}
+
+.dashboard-tile:hover {
+  border-color: var(--primary);
+}
+
+.dashboard-section {
+  margin-bottom: 18px;
+}
+
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.dashboard-alerts,
+.recent-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.dashboard-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px 6px;
+  border-bottom: 2px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table thead th {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Barras de "alunos por deficiencia" */
+.bar-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bar-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.bar {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--primary-bright);
+}
+
+/* ---- Historico de alteracoes ---------------------------------------------------- */
+
+.history-filters .inline-field,
+.inline-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.history-filters input[type="date"] {
+  width: auto;
+}
+
+.history-day {
+  margin-bottom: 18px;
+}
+
+.history-day h2 {
+  text-transform: none;
+}
+
+.history-entries {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-entries li {
+  display: grid;
+  grid-template-columns: 54px minmax(110px, auto) minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.history-entries time {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.history-action {
+  width: fit-content;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.history-list-full {
+  display: grid;
+  gap: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ---- Meu perfil ----------------------------------------------------------------- */
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.profile-photo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--grape-soft);
+  color: var(--grape-ink);
+  font-size: 32px;
+  font-weight: 900;
+  overflow: hidden;
+}
+
+/* Foto no lugar das iniciais (topo e perfil) */
+.avatar img,
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.avatar.has-photo {
+  padding: 0;
+  overflow: hidden;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* <label> com cara de botao que abre a escolha de arquivo */
+.file-action {
+  cursor: pointer;
+}
+
+.file-action:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.coordinators-panel {
+  margin-top: 24px;
+}
+
+/* ---- Virada de ano ---------------------------------------------------------------- */
+
+.rollover-plan {
+  display: grid;
+  gap: 12px;
+}
+
+.rollover-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.rollover-row legend {
+  padding: 0 6px;
+  font-weight: 800;
+}
+
+.rollover-row .inline-field {
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1 1 180px;
+}
+
+/* ---- Celular ------------------------------------------------------------------------ */
+
+@media (max-width: 680px) {
+  /* Filtros empilhados: sem isto, a "largura flexivel" dos campos virava
+     ALTURA na coluna e cada filtro ficava com 200px de altura */
+  .list-controls > *,
+  .list-controls input[type="search"],
+  .list-controls select {
+    flex: 0 0 auto;
+  }
+
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .history-entries li {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .profile-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---- Alto contraste do Windows ----------------------------------------------------- */
+
+@media (forced-colors: active) {
+  .entity-card,
+  .status-badge,
+  .history-entries li,
+  .rollover-row,
+  .dashboard-tile {
+    border: 2px solid CanvasText;
+  }
+
+  .bar > span {
+    background: CanvasText;
+  }
+}
+
+/* ---- Acesso das professoras (Meu perfil da coordenacao) ---------------------- */
+
+.access-guide {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.access-url-form {
+  display: grid;
+  gap: 8px;
+  max-width: 640px;
+}
+
+.access-url-form .secondary-action {
+  width: fit-content;
+}
+
+.access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Link com cara de botao (abre o painel do Tailscale) */
+a.primary-action {
+  text-decoration: none;
+}
+
+.access-status {
+  margin: 0;
+  font-weight: 700;
+  color: var(--primary-dark);
+  white-space: pre-wrap;
+}
+
+.access-status:empty {
+  display: none;
+}
+
+.access-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.access-steps ol {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 22px;
+}
+
+@media (max-width: 680px) {
+  .access-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Exclusao definitiva do aluno (dentro da janela Situacao) */
+.danger-zone {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 2px dashed var(--danger);
+  border-radius: var(--radius-sm);
+}
+
+.danger-zone summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--danger);
+}
+
+.danger-zone[open] summary {
+  margin-bottom: 4px;
+}
+
+.delete-who {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--danger-soft);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.danger-zone .danger-outline {
+  width: fit-content;
+}

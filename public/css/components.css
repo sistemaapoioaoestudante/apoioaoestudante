@@ -1,0 +1,504 @@
+/* ==========================================================================
+   Componentes reutilizaveis: paineis, cartoes, selos, avatares, listas,
+   abas, tabelas simples, dialogos, avisos e estados (vazio / carregando).
+   ========================================================================== */
+
+/* ---- Paineis e cartoes --------------------------------------------------- */
+
+.panel,
+.mini-card,
+.admin-card,
+.need-card,
+.assignment-panel {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 22px;
+}
+
+.mini-card,
+.admin-card,
+.need-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mini-card h3,
+.admin-card .title-sm,
+.need-card .title-sm {
+  margin: 0;
+}
+
+.mini-card p,
+.admin-card p,
+.need-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ---- Selos (badges) ------------------------------------------------------- */
+
+.badge,
+.activity-type,
+.draft-badge,
+.meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.badge {
+  min-height: 32px;
+  padding: 5px 12px;
+  background: var(--sun-soft);
+  border: 2px solid var(--sun);
+  color: var(--sun-ink);
+  font-size: 13px;
+}
+
+.activity-type {
+  padding: 4px 12px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 12px;
+  white-space: normal;
+}
+
+.draft-badge {
+  padding: 4px 10px;
+  background: var(--orange-soft);
+  color: var(--orange-ink);
+  font-size: 12px;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meta-row span {
+  padding: 4px 10px;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ---- Avatares (iniciais) -------------------------------------------------- */
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--grape-soft);
+  color: var(--grape-ink);
+  font-weight: 900;
+  font-size: 18px;
+}
+
+/* Cores alternadas para os avatares dos alunos, por posicao na lista */
+.students-grid > :nth-child(5n + 2) .avatar { background: var(--mint-soft); color: var(--mint-ink); }
+.students-grid > :nth-child(5n + 3) .avatar { background: var(--orange-soft); color: var(--orange-ink); }
+.students-grid > :nth-child(5n + 4) .avatar { background: var(--sky-soft); color: var(--sky-ink); }
+.students-grid > :nth-child(5n + 5) .avatar { background: var(--coral-soft); color: var(--coral-ink); }
+
+.student-card-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* ---- Listas com marcador colorido ----------------------------------------- */
+
+.summary-list,
+.check-list,
+.danger-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.summary-list li,
+.check-list li,
+.danger-list li {
+  position: relative;
+  padding-left: 30px;
+  line-height: 1.45;
+}
+
+.summary-list li::before,
+.check-list li::before,
+.danger-list li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* Os marcadores sao so enfeite: o "/ ''" da um texto alternativo vazio,
+   e o leitor de tela nao anuncia "marca de verificacao", "multiplicacao"... */
+.summary-list li::before {
+  content: "•" / "";
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.check-list li::before {
+  content: "✓" / "";
+  background: var(--mint-soft);
+  color: var(--mint-ink);
+}
+
+.danger-list li::before {
+  content: "✕" / "";
+  background: var(--coral-soft);
+  color: var(--coral-ink);
+}
+
+/* ---- Tabelas simples (linhas com acoes) ------------------------------------ */
+
+.simple-table {
+  display: grid;
+  gap: 10px;
+}
+
+.table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-left: 6px solid var(--primary-bright);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.table-row-title {
+  display: grid;
+  gap: 2px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---- Numeros em destaque --------------------------------------------------- */
+
+.teacher-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 18px 0 4px;
+}
+
+.stat-tile {
+  min-width: 130px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  text-align: center;
+  background: var(--sky-soft);
+  border: 2px solid var(--sky);
+}
+
+.stat-tile:nth-child(2) { background: var(--mint-soft); border-color: var(--mint); }
+.stat-tile:nth-child(3) { background: var(--orange-soft); border-color: var(--orange); }
+
+.stat-tile strong {
+  display: block;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.stat-tile span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ---- Caixas de destaque ---------------------------------------------------- */
+
+.teacher-note {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--sun-soft);
+  border: 2px dashed var(--sun);
+}
+
+.teacher-note strong {
+  color: var(--sun-ink);
+}
+
+.warning {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--sun-soft);
+  color: var(--sun-ink);
+  border: 2px solid var(--sun);
+}
+
+.admin-private {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--coral-soft);
+  border: 2px solid var(--coral-line);
+}
+
+.admin-private p {
+  color: var(--coral-ink);
+}
+
+.private-label {
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--coral-ink);
+}
+
+/* ---- Estados: vazio e carregando ------------------------------------------- */
+
+.empty-hint {
+  margin: 0;
+  padding: 22px;
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-veil);
+  color: var(--muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Mostrado enquanto uma lista carrega (ver showLoading() em app.js) */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 18px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.loading::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3px solid var(--line-strong);
+  border-top-color: var(--primary);
+  animation: spin 0.8s linear infinite;
+}
+
+/* ---- Linha de situacao da IA ----------------------------------------------- */
+
+.ai-status-line {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.ai-status-line.is-progress,
+.ai-status-line.is-ok,
+.ai-status-line.is-error {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+}
+
+.ai-status-line.is-progress {
+  background: var(--primary-soft);
+  border-color: var(--primary-bright);
+  color: var(--primary-dark);
+}
+
+.ai-status-line.is-progress::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.8;
+}
+
+.ai-status-line.is-ok {
+  background: var(--mint-soft);
+  border-color: var(--mint);
+  color: var(--mint-ink);
+}
+
+.ai-status-line.is-ok::before {
+  content: "✓" / "";
+  font-weight: 900;
+}
+
+.ai-status-line.is-error {
+  background: var(--coral-soft);
+  border-color: var(--coral);
+  color: var(--coral-ink);
+}
+
+.ai-status-line .text-action {
+  color: inherit;
+}
+
+/* ---- Dialogos -------------------------------------------------------------- */
+
+dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  /* Fundo explicito: sem ele a janela usava a cor "Canvas" do sistema, que
+     fica preta quando o tema do Windows e escuro (texto escuro sobre preto) */
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 8px 0 var(--primary-dark);
+}
+
+dialog.dialog-wide {
+  width: min(780px, calc(100vw - 32px));
+}
+
+dialog::backdrop {
+  background: var(--overlay);
+}
+
+dialog form {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.dialog-header {
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--line);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.checkbox-fieldset {
+  margin: 0;
+  padding: 14px;
+  border: 2px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.checkbox-fieldset legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.checkbox-option {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.checkbox-option input {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+/* Mensagem de erro em formularios (login, troca de senha e janelas -
+   .form-error e criada e removida por js/dialogForms.js) */
+.login-error,
+.form-error {
+  min-height: 20px;
+  margin: 0;
+  color: var(--danger);
+  font-weight: 800;
+}
+
+/* ---- Aviso flutuante (toast) ------------------------------------------------ */
+
+/* A "regiao" fica sempre na pagina (vazia quando nao ha aviso): o leitor de
+   tela so anuncia mudancas em regioes aria-live que ja existem na pagina
+   (se ela nascesse junto com o texto, o NVDA poderia ficar calado). O balao
+   (.toast) e criado e removido dentro dela. */
+.toast-region {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  max-width: min(400px, calc(100vw - 40px));
+}
+
+.toast {
+  margin: 0;
+  padding: 14px 18px;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--primary-dark);
+  color: var(--on-primary);
+  font-weight: 700;
+  box-shadow: var(--shadow-strong);
+}
+
+.toast-error {
+  background: var(--danger);
+}
+
+/* ---- Animacoes compartilhadas ----------------------------------------------- */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}

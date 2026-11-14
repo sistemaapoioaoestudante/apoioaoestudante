@@ -1,0 +1,11 @@
+{
+  "name": "Apoio ao Estudante",
+  "short_name": "Apoio",
+  "description": "Atividades inclusivas para a educação infantil.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f8ff",
+  "theme_color": "#3730a3",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

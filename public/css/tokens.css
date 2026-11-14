@@ -1,0 +1,105 @@
+/* ==========================================================================
+   Tokens de design - TODAS as cores, fontes e medidas do sistema.
+   Para mudar o visual, mexa aqui: os outros arquivos so usam estas variaveis.
+
+   Paleta "escola": cores vivas e alegres, mas sempre com contraste de
+   leitura adequado (texto escuro sobre fundo claro, ou branco sobre a cor
+   escura). Cada cor tem 3 tons:
+     --cor        -> destaque (bordas, icones, faixas)
+     --cor-soft   -> fundo suave de cartoes e selos
+     --cor-ink    -> texto escrito sobre o fundo suave (contraste >= 4.5:1)
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Base: folha de caderno quadriculado (ver body em base.css) */
+  --bg: #f6f8ff;
+  --grid-line: rgba(67, 56, 202, 0.07);
+  --notebook-margin: #ff8fa3;
+  --surface: #ffffff;
+  --surface-soft: #f4f1ff;
+  --ink: #1f2140;
+  --muted: #565a7a;
+  --line: #e7e2f6;
+  --line-strong: #c9c2ea;
+  /* Borda de campos de formulario: precisa de contraste >= 3:1 com o fundo
+     para a pessoa enxergar onde o campo esta (WCAG 1.4.11) - 4.1:1 no branco */
+  --field-border: #7d76b0;
+  /* Texto de exemplo dentro dos campos (placeholder): 5.3:1 no branco */
+  --placeholder: #666a89;
+  /* Texto sobre as cores fortes (botao principal, aba ativa, aviso) */
+  --on-primary: #ffffff;
+  /* Fundo escurecido atras das janelas e sombra do menu no celular */
+  --overlay: rgba(31, 33, 64, 0.5);
+  --overlay-soft: rgba(31, 33, 64, 0.25);
+  /* Brilhos brancos sobre o menu lateral (icones, hover) */
+  --sidebar-tint: rgba(255, 255, 255, 0.16);
+  --sidebar-hover: rgba(255, 255, 255, 0.12);
+  /* Fundo semitransparente das mensagens de "vazio" sobre o quadriculado */
+  --surface-veil: rgba(255, 255, 255, 0.6);
+
+  /* Cor principal (indigo) */
+  --primary: #4338ca;
+  --primary-dark: #312e81;
+  --primary-bright: #6366f1;
+  --primary-soft: #eef0ff;
+  /* Cor solida (sem degrade): estilo "adesivo" com sombra chapada */
+  --primary-gradient: var(--primary);
+
+  /* Cores de apoio - usadas nos tipos de atividade, selos e destaques */
+  --sun: #ffc83d;
+  --sun-soft: #fff4d1;
+  --sun-ink: #6b4a00;
+  --sun-shadow: #b98900;
+
+  --orange: #ff922b;
+  --orange-soft: #ffe8d1;
+  --orange-ink: #8a3d00;
+
+  --coral: #ff6b6b;
+  --coral-soft: #ffe3e3;
+  --coral-ink: #9c1c2b;
+
+  --mint: #20c997;
+  --mint-soft: #d7f7ec;
+  --mint-ink: #0b6b4f;
+  --mint-deep: #063b2c; /* texto sobre --mint cheio (5.9:1) */
+
+  --sky: #22b8cf;
+  --sky-soft: #dcf6fa;
+  --sky-ink: #0b6a78;
+
+  --grape: #9b5de5;
+  --grape-soft: #f1e6ff;
+  --grape-ink: #5b2a96;
+
+  --danger: #c2255c;
+  --danger-soft: #ffe0eb;
+  --danger-dark: #8a1240;
+  --coral-line: #ffc9c9; /* borda clara da caixa de dados pessoais */
+
+  /* Menu lateral */
+  --sidebar-bg: #3730a3;
+  --sidebar-ink: #ffffff;
+
+  /* Tipografia */
+  --font: "Segoe UI", "Nunito", system-ui, -apple-system, Arial, sans-serif;
+  --font-size: 16px;
+  --h1: 30px;
+  --h2: 22px;
+  --h3: 17px;
+
+  /* Formas e sombras */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  /* Sombra "adesivo": chapada, deslocada para baixo, sem desfoque */
+  --shadow: 0 4px 0 var(--line-strong);
+  --shadow-strong: 0 6px 0 var(--primary-dark);
+
+  /* Foco do teclado (bem visivel, ver accessibility.css). Laranja escuro:
+     5.2:1 sobre o branco - o laranja claro anterior (#ff922b) tinha so 2.2:1
+     e nao atingia o minimo de 3:1 para indicador de foco. */
+  --focus: #c2410c;
+}

@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Acessibilidade
+   - Foco do teclado sempre visivel.
+   - Modo de alto contraste do Windows (forced-colors): o Windows troca todas
+     as cores por um tema proprio; aqui garantimos que botoes, abas, a pagina
+     atual do menu e os cartoes continuem com forma e destaque visiveis.
+   - Pessoas que pediram menos movimento no sistema nao veem animacoes.
+   ========================================================================== */
+
+/* ---- Foco do teclado ------------------------------------------------------- */
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.sidebar :focus-visible {
+  outline-color: var(--sun);
+}
+
+/* Texto so para leitores de tela */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Alto contraste do Windows ---------------------------------------------- */
+
+@media (forced-colors: active) {
+  /* Botoes e campos: contorno sempre visivel */
+  .primary-action,
+  .secondary-action,
+  .danger-outline,
+  .icon-button,
+  .text-action,
+  .theme-chip,
+  .model-chip,
+  .nav-item,
+  .mobile-nav-toggle,
+  .how-it-works summary {
+    border: 2px solid ButtonText;
+  }
+
+  /* Pagina atual do menu e aba selecionada: borda dupla grossa + sublinhado.
+     Nao usamos a cor "Highlight" do sistema porque em alguns temas de alto
+     contraste ela e igual ao fundo (testado: preta no tema deste computador),
+     o que deixava a pagina atual MENOS visivel que as outras. */
+  .nav-item.active,
+  .nav-item[aria-current="page"] {
+    border: 5px double CanvasText;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .nav-item.active .nav-icon {
+    background: transparent;
+  }
+
+  /* Cartoes e paineis com borda visivel */
+  .panel,
+  .activity-card,
+  .mini-card,
+  .admin-card,
+  .need-card,
+  .assignment-panel,
+  .table-row,
+  .session-card,
+  .login-card,
+  .login-copy,
+  .ai-status-line.is-progress,
+  .ai-status-line.is-ok,
+  .ai-status-line.is-error {
+    border: 2px solid CanvasText;
+  }
+
+  .ai-status-line.is-error {
+    border-style: double;
+    border-width: 4px;
+  }
+
+  .loading::before {
+    border-color: CanvasText;
+    border-top-color: Highlight;
+  }
+
+  /* Botoes de exclusao: tracejado para diferenciar sem depender de cor */
+  .danger-outline {
+    border-style: dashed;
+  }
+}
+
+/* ---- Menos movimento -------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    /* "none" (e nao uma duracao minima): com duracao minima, TODO elemento
+       ganhava uma transicao de "all" - ate o visibility herdado dos botoes do
+       menu, que ficavam escondidos por um quadro e nao recebiam o foco ao
+       abrir a gaveta no celular. */
+    transition: none !important;
+  }
+}
