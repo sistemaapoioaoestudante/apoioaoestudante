@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.3"
+#define Versao "1.0.4"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"
@@ -561,9 +561,57 @@ begin
     Result := Result + NewLine + NewLine + 'Atualização: os dados da escola e as configurações são mantidos.';
 end;
 
+// Desinstalar: o sistema sai sempre. Os dados da escola e o modelo de IA so
+// saem se a pessoa confirmar (a resposta padrao e "Nao"; na desinstalacao
+// silenciosa nada e apagado).
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var
+  Dados, Modelos: string;
+  Codigo: Integer;
 begin
-  if CurUninstallStep = usPostUninstall then
-    MsgBox('O sistema foi removido. Os dados da escola continuam em ' + ExpandConstant('{app}\data') +
-      ' (apague a pasta só se tiver certeza).', mbInformation, MB_OK);
+  if CurUninstallStep <> usPostUninstall then Exit;
+  Dados := ExpandConstant('{app}\data');
+  Modelos := ExpandConstant('{app}\modelos-ia');
+
+  if DirExists(Dados) then
+  begin
+    if (SuppressibleMsgBox(
+          'O sistema foi removido.' + #13#10#13#10 +
+          'Deseja apagar também os DADOS DA ESCOLA (alunos, turmas, professoras, registros e cópias de segurança)?' + #13#10#13#10 +
+          'Isso NÃO pode ser desfeito. Se for trocar de computador ou reinstalar depois, responda Não: ' +
+          'os dados ficam em ' + Dados + '.',
+          mbConfirmation, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES) and
+       (SuppressibleMsgBox(
+          'Tem certeza? Todos os dados das crianças deste computador serão apagados para sempre.' + #13#10#13#10 +
+          'Dica: antes, use "Cópia de segurança no pendrive" se quiser guardar uma cópia.',
+          mbError, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES) then
+    begin
+      if DelTree(Dados, True, True, True) then
+        Log('Dados da escola apagados a pedido da pessoa.')
+      else
+        MsgBox('Não foi possível apagar tudo em ' + Dados + '. Reinicie o computador e apague a pasta à mão.', mbError, MB_OK);
+    end;
+  end;
+
+  if DirExists(Modelos) then
+  begin
+    if SuppressibleMsgBox(
+         'Deseja apagar também o modelo de inteligência artificial (cerca de 2 a 5 GB)?' + #13#10#13#10 +
+         'Ele não tem dados das crianças. Se for reinstalar o sistema neste computador, responda Não para não precisar baixar de novo.',
+         mbConfirmation, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES then
+    begin
+      // O Ollama do sistema pode estar com os arquivos abertos
+      Exec('taskkill.exe', '/f /im ollama.exe', '', SW_HIDE, ewWaitUntilTerminated, Codigo);
+      Sleep(1500);
+      if not DelTree(Modelos, True, True, True) then
+        MsgBox('Não foi possível apagar tudo em ' + Modelos + '. Reinicie o computador e apague a pasta à mão.', mbError, MB_OK);
+    end;
+  end;
+
+  // Pasta do sistema vazia: remove
+  RemoveDir(ExpandConstant('{app}'));
+  if DirExists(Dados) then
+    SuppressibleMsgBox('O sistema foi removido. Os dados da escola continuam em ' + Dados + '.', mbInformation, MB_OK, IDOK)
+  else
+    SuppressibleMsgBox('O sistema foi removido.', mbInformation, MB_OK, IDOK);
 end;
