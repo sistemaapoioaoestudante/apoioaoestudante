@@ -38,7 +38,7 @@ const FIELD_LABELS = {
   phone: "Telefone de contato"
 };
 
-function serializeStudent(student, role, context = studentContext()) {
+function serializeStudent(student, role, context = studentContext([student])) {
   const base = {
     id: student.id,
     shortName: student.shortName,
@@ -71,12 +71,10 @@ function serializeStudent(student, role, context = studentContext()) {
  * Dados auxiliares lidos UMA vez para uma lista inteira de alunos (em vez
  * de duas consultas por aluno).
  */
-function studentContext() {
-  const feedbackCounts = new Map();
-  store.getAll("feedbacks").forEach((item) => {
-    feedbackCounts.set(item.studentId, (feedbackCounts.get(item.studentId) || 0) + 1);
-  });
-  return { observations: store.getMap("studentObservations"), feedbackCounts };
+function studentContext(students) {
+  // Contagem feita pelo banco (GROUP BY), so dos alunos da lista
+  const ids = students ? students.map((student) => student.id) : undefined;
+  return { observations: store.getMap("studentObservations"), feedbackCounts: store.countBy("feedbacks", "studentId", ids) };
 }
 
 // As regras de quem pode ver qual aluno ficam em server/access/studentAccess.js.
@@ -145,8 +143,9 @@ function requireStudentPayload(body, { partial } = { partial: false }) {
 
 function register(router) {
   router.get("/api/students", requireAuth, (req, res) => {
-    const context = studentContext();
-    const students = visibleStudents(req.user).map((student) => serializeStudent(student, req.user.role, context));
+    const visible = visibleStudents(req.user);
+    const context = studentContext(visible);
+    const students = visible.map((student) => serializeStudent(student, req.user.role, context));
     sendJson(res, 200, { students });
   });
 
@@ -171,9 +170,7 @@ function register(router) {
     const classInfo = store.getById("classes", student.classId);
     const need = getNeedForDisability(student, store.getAll("needs"));
     const observation = store.getMap("studentObservations")[student.id] || "";
-    const history = store
-      .getAll("feedbacks")
-      .filter((item) => item.studentId === student.id);
+    const history = store.findBy("feedbacks", { studentId: student.id }); // so os deste aluno (indice)
     // O resumo mostra os 3 mais recentes; a tela tem "Ver histórico completo"
     // (GET /api/feedbacks?studentId=...), com todos os registros.
     const latest = history.slice(-3).reverse();

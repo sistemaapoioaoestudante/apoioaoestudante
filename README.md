@@ -184,6 +184,8 @@ npm start        # mesma coisa que "node server/index.js"
 npm run seed     # cria o banco se ele ainda não existir
 npm run reset-db # apaga tudo e recria os dados de demonstração
 npm run testar   # testes automáticos (usam uma pasta temporária, nunca o banco real)
+npm run medir    # ensaios de carga e de banco (dados fictícios; resultados em bench/resultados)
+node bench/latenciaIa.js llama3.2   # tempo de geração pela IA neste computador
 ```
 
 #### Começar a usar de verdade (sem os dados de demonstração)
@@ -374,6 +376,7 @@ apoio-estudante-app/
                           histórico, perfil, virada de ano, IA, troca de senha
   data/                   apoio.sqlite e backups (criado automaticamente, fora do git)
   tests/                  testes automáticos (npm run testar)
+  bench/                  ensaios de desempenho (npm run medir) e de tempo da IA
   backup-pendrive.bat     cópia do banco para pendrive
   recuperar-acesso.bat    senha da coordenação esquecida (pede administrador do Windows)
   migrar.bat              traz todos os dados de outro computador pela rede (troca de máquina)

@@ -16,13 +16,13 @@ function register(router) {
   router.get("/api/feedbacks", requireAuth, (req, res) => {
     const { studentId, teacherId } = req.query;
 
-    // Comeca so com os feedbacks de alunos que este usuario pode ver.
-    const allowedStudentIds = new Set(visibleStudents(req.user).map((student) => student.id));
-    let feedbacks = store.getAll("feedbacks").filter((item) => allowedStudentIds.has(item.studentId));
-
+    let feedbacks;
     if (studentId) {
       assertCanAccessStudent(req.user, studentId); // 404/403 claros em vez de lista vazia
-      feedbacks = feedbacks.filter((item) => item.studentId === studentId);
+      feedbacks = store.findBy("feedbacks", { studentId });
+    } else {
+      // So os feedbacks de alunos que este usuario pode ver.
+      feedbacks = store.findBy("feedbacks", { studentId: visibleStudents(req.user).map((student) => student.id) });
     }
     if (teacherId) feedbacks = feedbacks.filter((item) => item.teacherId === teacherId);
 

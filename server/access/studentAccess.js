@@ -43,9 +43,10 @@ function teacherOwnsStudent(user, student) {
  * @returns {object[]}
  */
 function visibleStudents(user) {
-  const students = store.getAll("students");
-  if (visibleClassIds(user) === null) return students;
-  return students.filter((student) => teacherOwnsStudent(user, student));
+  const classIds = visibleClassIds(user);
+  if (classIds === null) return store.getAll("students");
+  // So os alunos ativos das turmas dela, consultados no banco (indice)
+  return store.findBy("students", { classId: classIds, status: "ativo" });
 }
 
 /**

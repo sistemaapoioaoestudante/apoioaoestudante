@@ -13,15 +13,15 @@
 //   - aguenta varias pessoas usando ao mesmo tempo e permite backup com o
 //     sistema rodando (backupTo).
 //
-// As rotas usam uma interface simples (getAll, getById, insert, update,
-// remove, getMap, setMapValue); a traducao entre as linhas do banco e os
+// As rotas usam uma interface simples (getAll, getById, findBy, countBy,
+// insert, update, remove, getMap, setMapValue); a traducao entre as linhas do banco e os
 // objetos das rotas fica em server/db/collections.js.
 const fs = require("fs");
 const { DatabaseSync } = require("node:sqlite");
 const config = require("./config");
 const { makeId } = require("./util/id");
 const { MIGRATIONS } = require("./db/schema");
-const { MAPS, definitionOf, rowToRecord, recordToColumns } = require("./db/collections");
+const { MAPS, definitionOf, rowToRecord, recordToColumns, toColumn } = require("./db/collections");
 const { translateDbError } = require("./db/errors");
 
 let db = null;
@@ -149,6 +149,56 @@ function getById(collection, id) {
     const row = db.prepare(`SELECT * FROM ${definition.table} WHERE ${definition.key} = ?`).get(id ?? null);
     if (!row) return null;
     return withClassIds(collection, [rowToRecord(definition, row)])[0];
+  });
+}
+
+/**
+ * Registros que atendem a todos os criterios, consultados no proprio banco
+ * (usa os indices - ex: os registros de UM aluno, sem ler os da escola toda).
+ * Um criterio com lista vira "coluna IN (...)".
+ * @example findBy("feedbacks", { studentId: "joao", result: "Não funcionou" })
+ * @example findBy("students", { classId: ["jardim-a", "pre-i-b"] })
+ */
+function findBy(collection, criteria) {
+  return run(() => {
+    const definition = definitionOf(collection);
+    const where = [];
+    const params = [];
+    for (const [key, value] of Object.entries(criteria || {})) {
+      const column = toColumn(key);
+      if (!definition.columns.includes(column)) throw new Error(`Campo "${key}" não existe na tabela ${definition.table}.`);
+      if (Array.isArray(value)) {
+        if (!value.length) return []; // lista vazia: nenhum registro atende
+        where.push(`${column} IN (${value.map(() => "?").join(", ")})`);
+        params.push(...value);
+      } else {
+        where.push(`${column} = ?`);
+        params.push(value ?? null);
+      }
+    }
+    const sql = `SELECT * FROM ${definition.table}${where.length ? ` WHERE ${where.join(" AND ")}` : ""} ORDER BY rowid`;
+    const rows = db.prepare(sql).all(...params);
+    return withClassIds(collection, rows.map((row) => rowToRecord(definition, row)));
+  });
+}
+
+/**
+ * Quantos registros existem para cada valor de um campo (contado pelo banco).
+ * Com `values`, conta so esses valores (ex: os alunos de uma professora).
+ * @example countBy("feedbacks", "studentId") -> Map { "joao" => 2, ... }
+ * @example countBy("feedbacks", "studentId", ["joao", "livia"])
+ */
+function countBy(collection, key, values) {
+  return run(() => {
+    const definition = definitionOf(collection);
+    const column = toColumn(key);
+    if (!definition.columns.includes(column)) throw new Error(`Campo "${key}" não existe na tabela ${definition.table}.`);
+    if (Array.isArray(values) && !values.length) return new Map();
+    const where = Array.isArray(values) ? ` WHERE ${column} IN (${values.map(() => "?").join(", ")})` : "";
+    const rows = db
+      .prepare(`SELECT ${column} AS chave, COUNT(*) AS total FROM ${definition.table}${where} GROUP BY ${column}`)
+      .all(...(Array.isArray(values) ? values : []));
+    return new Map(rows.map((row) => [row.chave, row.total]));
   });
 }
 
@@ -301,6 +351,8 @@ module.exports = {
   transaction,
   getAll,
   getById,
+  findBy,
+  countBy,
   insert,
   update,
   remove,

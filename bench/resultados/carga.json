@@ -1,0 +1,133 @@
+{
+  "data": "2026-11-15T01:17:38.548Z",
+  "maquina": {
+    "processador": "Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz",
+    "nucleosLogicos": 8,
+    "memoriaGB": 31.9,
+    "sistema": "Windows_NT 10.0.26300",
+    "node": "v24.21.0"
+  },
+  "requisicoesPorRodada": 2000,
+  "resultados": [
+    {
+      "cenario": "P",
+      "rota": "Lista de alunos (leitura)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 7,
+      "vazao": 819.5,
+      "p50": 11.4,
+      "p95": 17.3,
+      "erros": 0
+    },
+    {
+      "cenario": "P",
+      "rota": "Lista de alunos (leitura)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 7,
+      "vazao": 959.5,
+      "p50": 49.8,
+      "p95": 69,
+      "erros": 0
+    },
+    {
+      "cenario": "P",
+      "rota": "Resumo do aluno (leitura)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 7,
+      "vazao": 867,
+      "p50": 11.1,
+      "p95": 14.2,
+      "erros": 0
+    },
+    {
+      "cenario": "P",
+      "rota": "Resumo do aluno (leitura)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 7,
+      "vazao": 753.8,
+      "p50": 63.1,
+      "p95": 85,
+      "erros": 0
+    },
+    {
+      "cenario": "P",
+      "rota": "Registro de resultado (gravação)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 7,
+      "vazao": 279,
+      "p50": 34.8,
+      "p95": 42,
+      "erros": 0
+    },
+    {
+      "cenario": "P",
+      "rota": "Registro de resultado (gravação)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 7,
+      "vazao": 290.3,
+      "p50": 167.6,
+      "p95": 199.2,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Lista de alunos (leitura)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 202,
+      "vazao": 109.8,
+      "p50": 85.4,
+      "p95": 128.4,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Lista de alunos (leitura)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 202,
+      "vazao": 116.1,
+      "p50": 408,
+      "p95": 561.4,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Resumo do aluno (leitura)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 202,
+      "vazao": 661,
+      "p50": 14.5,
+      "p95": 21.8,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Resumo do aluno (leitura)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 202,
+      "vazao": 610.2,
+      "p50": 78.2,
+      "p95": 101.1,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Registro de resultado (gravação)",
+      "simultaneas": 10,
+      "alunosDaProfessora": 202,
+      "vazao": 261.7,
+      "p50": 36.4,
+      "p95": 47.7,
+      "erros": 0
+    },
+    {
+      "cenario": "M",
+      "rota": "Registro de resultado (gravação)",
+      "simultaneas": 50,
+      "alunosDaProfessora": 202,
+      "vazao": 284.9,
+      "p50": 171,
+      "p95": 201.4,
+      "erros": 0
+    }
+  ]
+}

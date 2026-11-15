@@ -1,0 +1,58 @@
+{
+  "data": "2026-11-15T01:18:03.004Z",
+  "maquina": {
+    "processador": "Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz",
+    "nucleosLogicos": 8,
+    "memoriaGB": 31.9,
+    "sistema": "Windows_NT 10.0.26300",
+    "node": "v24.21.0"
+  },
+  "repeticoes": 200,
+  "desempenho": [
+    {
+      "cenario": "P",
+      "registros": 204,
+      "alunos": 18,
+      "tamanhoMB": 0.2,
+      "abrirBancoMs": 3.3,
+      "gravacaoP50": 2.426,
+      "gravacaoP95": 2.708,
+      "consultaP50": 0.175,
+      "consultaP95": 0.287
+    },
+    {
+      "cenario": "M",
+      "registros": 40204,
+      "alunos": 4000,
+      "tamanhoMB": 8.79,
+      "abrirBancoMs": 3.8,
+      "gravacaoP50": 2.456,
+      "gravacaoP95": 2.794,
+      "consultaP50": 0.189,
+      "consultaP95": 0.294
+    }
+  ],
+  "concorrencia": [
+    {
+      "rodada": 1,
+      "esperados": 1000,
+      "gravados": 1000,
+      "perdidos": 0,
+      "falhasRelatadas": 0
+    },
+    {
+      "rodada": 2,
+      "esperados": 1000,
+      "gravados": 1000,
+      "perdidos": 0,
+      "falhasRelatadas": 0
+    },
+    {
+      "rodada": 3,
+      "esperados": 1000,
+      "gravados": 1000,
+      "perdidos": 0,
+      "falhasRelatadas": 0
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "data": "2026-11-15T16:50:35.539Z",
+  "maquina": {
+    "processador": "Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz",
+    "nucleosLogicos": 8,
+    "memoriaGB": 31.9,
+    "sistema": "Windows_NT 10.0.26300",
+    "node": "v24.21.0"
+  },
+  "resumo": {
+    "modelo": "qwen2.5:7b",
+    "frioTotalS": 254.6,
+    "frioPrimeiraS": 149.6,
+    "primeiraP50": 54.7,
+    "totalP50": 141.5,
+    "totalP95": 156.7,
+    "completas": "6/6"
+  },
+  "chamadas": [
+    {
+      "tipo": "a frio",
+      "tema": "Brincadeiras de roda",
+      "primeiraS": 149.6,
+      "totalS": 254.6,
+      "atividades": 3,
+      "erro": null
+    },
+    {
+      "tipo": "a quente",
+      "tema": "Animais da fazenda",
+      "primeiraS": 58.8,
+      "totalS": 141.5,
+      "atividades": 3,
+      "erro": null
+    },
+    {
+      "tipo": "a quente",
+      "tema": "Cores e formas",
+      "primeiraS": 54.7,
+      "totalS": 146.8,
+      "atividades": 3,
+      "erro": null
+    },
+    {
+      "tipo": "a quente",
+      "tema": "Frutas",
+      "primeiraS": 61.1,
+      "totalS": 156.7,
+      "atividades": 3,
+      "erro": null
+    },
+    {
+      "tipo": "a quente",
+      "tema": "Meios de transporte",
+      "primeiraS": 46.8,
+      "totalS": 129.1,
+      "atividades": 3,
+      "erro": null
+    },
+    {
+      "tipo": "a quente",
+      "tema": "Família",
+      "primeiraS": 54.7,
+      "totalS": 127.5,
+      "atividades": 3,
+      "erro": null
+    }
+  ]
+}

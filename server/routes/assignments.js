@@ -21,8 +21,7 @@ function register(router) {
     if (!teacherOwnsStudent(req.user, student)) {
       throw new HttpError(403, "Este aluno não está em nenhuma das suas turmas.");
     }
-    let assignments = store.getAll("assignments").filter((item) => item.studentId === studentId);
-    if (status) assignments = assignments.filter((item) => item.status === status);
+    let assignments = store.findBy("assignments", status ? { studentId, status } : { studentId });
     assignments = assignments.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     sendJson(res, 200, { assignments });
   });
@@ -42,9 +41,7 @@ function register(router) {
       throw new HttpError(403, "Este aluno não está em nenhuma das suas turmas.");
     }
 
-    const alreadyOpen = store
-      .getAll("assignments")
-      .some((item) => item.studentId === studentId && item.status === "selecionada");
+    const alreadyOpen = store.findBy("assignments", { studentId, status: "selecionada" }).length > 0;
     if (alreadyOpen) {
       throw new HttpError(409, "Já existe uma atividade em andamento para este aluno. Registre o resultado ou cancele antes de selecionar outra.");
     }

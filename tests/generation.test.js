@@ -4,7 +4,9 @@
 //   - se a conexao cai no meio (celular apagou a tela), a geracao continua
 //     e, ao reconectar, a tela recebe tudo;
 //   - duas professoras ao mesmo tempo: a segunda entra na fila;
-//   - "completar as que faltaram" pede so a quantidade certa.
+//   - "completar as que faltaram" pede so a quantidade certa;
+//   - nenhum dado pessoal do aluno vai para a IA;
+//   - o que "nao funcionou" com o aluno e informado a IA para nao repetir.
 const { test, before, after } = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn, spawnSync } = require("node:child_process");
@@ -180,4 +182,32 @@ test("completar so as que faltaram pede a quantidade certa", async () => {
   const sent = seenRequests.slice(before).find((request) => request.stream);
   assert.equal(sent.format.properties.atividades.maxItems, 1);
   assert.match(sent.messages[1].content, /APENAS 1 atividade/);
+});
+
+test("nenhum dado pessoal do aluno vai para a IA (so o perfil pedagogico)", async () => {
+  const before = seenRequests.length;
+  await readEvents("/api/activities?studentId=joao&goalCode=EI02EO01&theme=Privacidade", cookies.ana);
+  const sent = seenRequests.slice(before).find((request) => request.stream);
+  const text = sent.messages.map((message) => message.content).join("\n");
+  // Dados pessoais do aluno de demonstracao (server/seedData/demo.js)
+  for (const personal of ["João", "Alves", "14/05/2023", "Responsável fictício", "(00) 00000-0000"]) {
+    assert.ok(!text.includes(personal), `"${personal}" nao poderia ir para a IA`);
+  }
+  // O perfil pedagogico vai: tema, objetivo da BNCC e a base da necessidade
+  assert.match(text, /Privacidade/);
+  assert.match(text, /EI02EO01/);
+});
+
+test("o que nao funcionou com o aluno e informado a IA para nao repetir", async () => {
+  const before = seenRequests.length;
+  // Registro de "Nao funcionou" feito pela professora
+  const saved = await fetch(`${base}/api/feedbacks`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", cookie: cookies.ana },
+    body: JSON.stringify({ studentId: "joao", theme: "Cores", activityTitle: "Caça às cores no pátio", result: "Não funcionou", notes: "teste" })
+  });
+  assert.equal(saved.status, 201);
+  await readEvents("/api/activities?studentId=joao&goalCode=EI02EO01&theme=Repeticao", cookies.ana);
+  const sent = seenRequests.slice(before).find((request) => request.stream);
+  assert.match(sent.messages[1].content, /sem sucesso com este aluno[^\n]*Caça às cores no pátio/);
 });

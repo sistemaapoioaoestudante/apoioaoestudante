@@ -42,8 +42,7 @@ const IDLE_TIMEOUT_MS = 60 * 1000;
 function buildGenerationInput({ student, goal, classInfo, theme }) {
   const need = getNeedForDisability(student, store.getAll("needs"));
   const failedTitles = store
-    .getAll("feedbacks")
-    .filter((item) => item.studentId === student.id && item.result === "Não funcionou")
+    .findBy("feedbacks", { studentId: student.id, result: "Não funcionou" })
     .map((item) => item.activityTitle);
   return {
     needName: need.name,
