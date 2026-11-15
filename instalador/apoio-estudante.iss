@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.2"
+#define Versao "1.0.3"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"
@@ -148,6 +148,10 @@ var
   PaginaModelo: TInputOptionWizardPage;     // modelo de IA
   PaginaDownload: TDownloadWizardPage;      // baixa Node/Ollama/Tailscale
   BaixarNode, BaixarOllama, BaixarTailscale: Boolean;
+  // Fotografia tirada ANTES de copiar os arquivos: depois que CriarBanco
+  // cria o banco, conferir o arquivo de novo daria "atualizacao" numa
+  // primeira instalacao (e o modelo de IA nao seria baixado).
+  Instalando, EraAtualizacao: Boolean;
 
 // Variavel de ambiente so deste processo (passa a senha ao seed sem gravar
 // em disco nem na linha de comando)
@@ -159,7 +163,10 @@ function SetEnvironmentVariable(Nome: string; Valor: string): Boolean;
 // Ja existe um banco nesta pasta? (atualizacao: nada de conta nova)
 function EhAtualizacao: Boolean;
 begin
-  Result := FileExists(ExpandConstant('{app}\data\apoio.sqlite'));
+  if Instalando then
+    Result := EraAtualizacao
+  else
+    Result := FileExists(ExpandConstant('{app}\data\apoio.sqlite'));
 end;
 
 function EhMigracao: Boolean;
@@ -407,35 +414,116 @@ begin
   SetEnvironmentVariable('COORD_EMAIL', '');
 end;
 
-// Inicia o servico (que tambem abre o Ollama) e baixa o modelo de IA
-procedure PrepararIa;
+// Modelo a baixar: na atualizacao, o que a escola ja usa (.env); senao, o escolhido
+function ModeloParaBaixar: string;
 var
-  Ollama: string;
-  Codigo: Integer;
+  Linhas: TArrayOfString;
+  I: Integer;
 begin
-  Ollama := CaminhoOllama;
-  if Ollama = '' then Exit;
-  // O Ollama aberto na sessao da pessoa usaria outra pasta de modelos:
-  // fecha; o servico abre o dele, com a pasta modelos-ia
+  Result := ModeloEscolhido;
+  if EhAtualizacao and LoadStringsFromFile(ExpandConstant('{app}\.env'), Linhas) then
+    for I := 0 to GetArrayLength(Linhas) - 1 do
+      if Pos('OLLAMA_MODEL=', Trim(Linhas[I])) = 1 then
+        Result := Trim(Copy(Trim(Linhas[I]), 14, 200));
+end;
+
+// O modelo esta na pasta do sistema (modelos-ia)? E o arquivo que o Ollama
+// grava ao terminar o download: manifests\...\library\<nome>\<versao>
+function ModeloNaPasta(Modelo: string): Boolean;
+var
+  Nome, Versao: string;
+  P: Integer;
+begin
+  P := Pos(':', Modelo);
+  if P > 0 then
+  begin
+    Nome := Copy(Modelo, 1, P - 1);
+    Versao := Copy(Modelo, P + 1, 200);
+  end
+  else
+  begin
+    Nome := Modelo;
+    Versao := 'latest';
+  end;
+  Result := FileExists(ExpandConstant('{app}\modelos-ia\manifests\registry.ollama.ai\library\') + Nome + '\' + Versao);
+end;
+
+// Espera o Ollama responder (ate ~40 s)
+procedure EsperarOllama;
+var
+  I, Codigo: Integer;
+begin
+  for I := 1 to 20 do
+  begin
+    if Exec('curl.exe', '-s -o nul --max-time 2 http://127.0.0.1:11434/', '', SW_HIDE, ewWaitUntilTerminated, Codigo) and (Codigo = 0) then
+      Exit;
+    Sleep(2000);
+  end;
+end;
+
+// Fecha qualquer Ollama aberto (o da sessao da pessoa usaria outra pasta de
+// modelos) e abre o do sistema, com a pasta modelos-ia
+procedure AbrirOllamaDoSistema(Primeira: Boolean);
+var
+  Codigo: Integer;
+  Tarefa: string;
+begin
+  Tarefa := '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\windows\tarefa.ps1') + '" ';
+  if not Primeira then
+    Rodar('powershell.exe', Tarefa + '-Parar', False);
   Rodar('taskkill.exe', '/f /im "ollama app.exe"', False);
   Rodar('taskkill.exe', '/f /im ollama.exe', False);
   Sleep(1500);
   SetEnvironmentVariable('OLLAMA_MODELS', ExpandConstant('{app}\modelos-ia'));
   if WizardIsTaskSelected('servico') and not EhMigracao then
-    Rodar('powershell.exe', '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\windows\tarefa.ps1') + '" -Instalar', False)
+  begin
+    if Primeira then
+      Rodar('powershell.exe', Tarefa + '-Instalar', False)
+    else
+      Rodar('powershell.exe', Tarefa + '-Iniciar', False);
+  end
   else
     // Sem o servico: abre o Ollama so para baixar o modelo
-    Exec(Ollama, 'serve', '', SW_HIDE, ewNoWait, Codigo);
-  Sleep(5000);
-  if EhAtualizacao then Exit; // modelo ja baixado na primeira instalacao
-  Status('Baixando o modelo de IA (' + ModeloEscolhido + '). Acompanhe na janela preta...');
-  if not Rodar(Ollama, 'pull ' + ModeloEscolhido, True) then
-    MsgBox('Não foi possível baixar o modelo de IA agora. O sistema funciona, mas só gera atividades depois do download.' + #13#10 +
-      'Para tentar de novo: abra o Prompt de Comando e rode "ollama pull ' + ModeloEscolhido + '".', mbInformation, MB_OK);
+    Exec(CaminhoOllama, 'serve', '', SW_HIDE, ewNoWait, Codigo);
+  EsperarOllama;
+end;
+
+// Inicia o servico (que tambem abre o Ollama) e baixa o modelo de IA,
+// conferindo se ele chegou mesmo na pasta do sistema
+procedure PrepararIa;
+var
+  Ollama, Modelo: string;
+begin
+  Ollama := CaminhoOllama;
+  if Ollama = '' then Exit;
+  Modelo := ModeloParaBaixar;
+  AbrirOllamaDoSistema(True);
+  if ModeloNaPasta(Modelo) then Exit; // ja baixado (ex: atualizacao)
+
+  Status('Baixando o modelo de IA (' + Modelo + '). Acompanhe na janela preta...');
+  Rodar(Ollama, 'pull ' + Modelo, True);
+  if not ModeloNaPasta(Modelo) then
+  begin
+    // Outro Ollama atendeu (ou a internet caiu): abre o do sistema e tenta de novo
+    Log('Modelo nao chegou em modelos-ia; tentando de novo com o Ollama do sistema.');
+    Status('Conferindo o modelo de IA e tentando de novo...');
+    AbrirOllamaDoSistema(False);
+    Rodar(Ollama, 'pull ' + Modelo, True);
+  end;
+  if not ModeloNaPasta(Modelo) then
+    MsgBox('Não foi possível baixar o modelo de IA (' + Modelo + ') agora. O sistema funciona, mas só gera atividades depois do download.' + #13#10#13#10 +
+      'Para tentar de novo: confira a internet e rode este instalador outra vez (por cima). Os dados são mantidos.', mbInformation, MB_OK);
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
+  // Antes de copiar qualquer arquivo: e atualizacao ou primeira instalacao?
+  if CurStep = ssInstall then
+  begin
+    EraAtualizacao := FileExists(ExpandConstant('{app}\data\apoio.sqlite'));
+    Instalando := True;
+  end;
+
   if CurStep = ssPostInstall then
   begin
     InstalarDependencias;
