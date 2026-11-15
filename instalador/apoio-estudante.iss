@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.1"
+#define Versao "1.0.2"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"
@@ -99,7 +99,7 @@ Source: "..\migrar.bat"; DestDir: "{app}"; Flags: ignoreversion
 Name: "{autoprograms}\{#Nome}\Abrir o {#Nome}"; Filename: "http://127.0.0.1:{#Porta}/"; IconFilename: "{app}\windows\icone.ico"
 Name: "{autodesktop}\{#Nome}"; Filename: "http://127.0.0.1:{#Porta}/"; IconFilename: "{app}\windows\icone.ico"; Tasks: atalho
 Name: "{autoprograms}\{#Nome}\Cópia de segurança no pendrive"; Filename: "{app}\backup-pendrive.bat"; WorkingDir: "{app}"; IconFilename: "{app}\windows\icone.ico"
-Name: "{autoprograms}\{#Nome}\Configurar acesso pelo celular"; Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; IconFilename: "{app}\windows\icone.ico"; Tasks: celular
+Name: "{autoprograms}\{#Nome}\Configurar acesso pelo celular"; Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; IconFilename: "{app}\windows\icone.ico"; Check: UsaTailscale
 Name: "{autoprograms}\{#Nome}\Trazer dados de outro computador"; Filename: "{app}\migrar.bat"; WorkingDir: "{app}"; IconFilename: "{app}\windows\icone.ico"
 Name: "{autoprograms}\{#Nome}\Recuperar acesso da coordenação"; Filename: "{app}\recuperar-acesso.bat"; WorkingDir: "{app}"; IconFilename: "{app}\windows\icone.ico"
 Name: "{autoprograms}\{#Nome}\Manual de acesso pelo celular"; Filename: "{app}\docs\acesso-remoto.md"
@@ -118,12 +118,16 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
 ; Icone perto do relogio ja nesta sessao
 Filename: "powershell.exe"; Parameters: "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""{app}\windows\bandeja.ps1"""; \
   Flags: runasoriginaluser nowait runhidden; Tasks: servico; Check: not EhMigracao
-; Troca de computador: traz os dados agora
+; Troca de computador: PRIMEIRO entra no Tailscale (os dados vem do
+; computador antigo pela rede privada), DEPOIS traz os dados. O [Run] roda
+; nesta ordem, e cada passo espera o anterior terminar.
+Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Description: "Entrar no Tailscale com a conta da escola (necessário para trazer os dados)"; \
+  Flags: postinstall shellexec waituntilterminated; Check: EhMigracao
 Filename: "{app}\migrar.bat"; WorkingDir: "{app}"; Description: "Trazer agora os dados do computador antigo"; \
   Flags: postinstall shellexec waituntilterminated; Check: EhMigracao
-; Configurar o celular (entrar no Tailscale com a conta da escola)
+; Primeira instalacao: configurar o celular (entrar no Tailscale com a conta da escola)
 Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Description: "Configurar agora o acesso pelo celular (Tailscale)"; \
-  Flags: postinstall shellexec unchecked waituntilterminated; Tasks: celular
+  Flags: postinstall shellexec unchecked waituntilterminated; Tasks: celular; Check: not EhMigracao
 Filename: "http://127.0.0.1:{#Porta}/"; Description: "Abrir o {#Nome}"; Flags: postinstall shellexec nowait
 
 [UninstallRun]
@@ -190,6 +194,13 @@ begin
     Result := ExpandConstant('{localappdata}\Programs\Ollama\ollama.exe')
   else if FileExists(ExpandConstant('{commonpf64}\Ollama\ollama.exe')) then
     Result := ExpandConstant('{commonpf64}\Ollama\ollama.exe');
+end;
+
+// Tailscale em uso: pedido para o celular, ou troca de computador (os dados
+// vem por ele). Mostra o atalho "Configurar acesso pelo celular".
+function UsaTailscale: Boolean;
+begin
+  Result := WizardIsTaskSelected('celular') or EhMigracao;
 end;
 
 function TemTailscale: Boolean;

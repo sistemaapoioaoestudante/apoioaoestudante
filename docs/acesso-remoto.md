@@ -89,14 +89,19 @@ Todos os dados vão do computador antigo para o novo **pela rede privada da esco
 
 **Antes de começar**
 - O computador **antigo** está ligado, com o sistema aberto e o Tailscale conectado.
-- No computador **novo**: rode o instalador e escolha **Troca de computador**. Ele instala o Tailscale; entre com a conta da escola (menu Iniciar → **Configurar acesso pelo celular**). O novo vai aparecer como `apoio-escola-1`, porque o nome `apoio-escola` ainda é do antigo.
 - Você tem o e-mail e a senha da **coordenação**. Professora não consegue migrar.
+- Você tem a conta da escola no Tailscale.
 
 **No computador novo**
-1. No fim da instalação, deixe marcado "Trazer agora os dados do computador antigo" (ou, depois, menu Iniciar → **Trazer dados de outro computador**).
-2. Informe o endereço do antigo (ex: `https://apoio-escola.nome-da-rede.ts.net`), o e-mail e a senha da coordenação. A senha não aparece ao digitar.
-3. O programa baixa a cópia, confere se ela está íntegra e coloca no lugar. Se já havia dados no computador novo, eles são guardados em `data/backups/antes-da-migracao-<data>.sqlite`.
-4. O sistema volta a ficar no ar sozinho. Abra (menu Iniciar → **Abrir o Apoio ao Estudante**) e confira os dados.
+1. Rode o instalador e escolha **Troca de computador**. Ele instala o Tailscale junto.
+2. Na última tela, deixe as opções marcadas e clique em **Concluir**. Elas rodam nesta ordem:
+   - **"Entrar no Tailscale com a conta da escola"**: entre com a mesma conta da escola. O novo vai aparecer como `apoio-escola-1`, porque o nome `apoio-escola` ainda é do antigo. Quando aparecer "Pronto!", aperte uma tecla.
+   - **"Trazer agora os dados do computador antigo"**: começa logo depois.
+
+   Se fechou o instalador antes, use o menu Iniciar: primeiro **Configurar acesso pelo celular**, depois **Trazer dados de outro computador**.
+3. Informe o endereço do antigo (ex: `https://apoio-escola.nome-da-rede.ts.net`), o e-mail e a senha da coordenação. A senha não aparece ao digitar.
+4. O programa baixa a cópia, confere se ela está íntegra e coloca no lugar. Se já havia dados no computador novo, eles são guardados em `data/backups/antes-da-migracao-<data>.sqlite`.
+5. O sistema volta a ficar no ar sozinho. Abra (menu Iniciar → **Abrir o Apoio ao Estudante**) e confira os dados.
 
 **Depois de conferir**
 1. No painel do Tailscale, **remova o computador antigo** ("Machines" → … → "Remove").

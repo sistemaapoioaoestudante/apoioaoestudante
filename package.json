@@ -1,6 +1,6 @@
 {
   "name": "apoio-estudante",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Plataforma local de apoio ao planejamento pedagogico inclusivo (BNCC + adaptacoes para NEE).",
   "private": true,
   "type": "commonjs",
