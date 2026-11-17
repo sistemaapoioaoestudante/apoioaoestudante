@@ -28,16 +28,19 @@ O Tailscale cria uma rede privada e criptografada só entre os aparelhos que a e
 ### Liberar cada professora (coordenação)
 O passo a passo também está no sistema, em **Meu perfil** da coordenação, na área **"Acesso das professoras pelo celular"**. Lá dá para salvar o endereço e copiar uma mensagem pronta para o WhatsApp.
 
-1. Abra o painel do Tailscale (<https://login.tailscale.com/admin/machines>) com a conta da escola.
+1. Abra o painel do Tailscale (<https://console.tailscale.com/admin/machines>) com a conta da escola.
 2. Encontre a máquina onde o sistema roda, `apoio-escola`. Não é nenhum dos celulares.
-3. Clique em **…** → **Share…** → **Generate & copy invite link**.
-4. Mande o link para a professora. **Cada convite vale para uma pessoa só.**
+3. Clique em **…** → **Share…**. Na janela "Share machine", escolha:
+   - **Share via email**: digite o e-mail da professora e clique em **Share**. O convite chega no e-mail dela.
+   - **Copy share link**: clique em **Copy share link** e mande o link para a professora. Deixe **"Reusable link"** desmarcado: assim cada link vale para uma pessoa só.
 
-O endereço só muda se o sistema for instalado com outro nome de computador ou com outra conta do Tailscale. Ao trocar de computador, use o mesmo nome `apoio-escola` e remova o computador antigo no painel.
+**Endereço do sistema:** clique em `apoio-escola` no painel e copie o **Full domain** (ex: `apoio-escola.tail1234ab.ts.net`). O endereço é ele com `https://` na frente. Salve uma vez em Meu perfil da coordenação. Ele só muda se o sistema for instalado com outro nome de computador ou com outra conta do Tailscale. Ao trocar de computador, use o mesmo nome `apoio-escola` e remova o computador antigo no painel.
+
+**Importante:** no computador `apoio-escola`, use **… → Disable key expiry**. Sem isso, o Tailscale desconecta o computador depois de uns 6 meses e as professoras perdem o acesso.
 
 ### Em cada celular, tablet ou computador das professoras (uma vez)
 1. Instale o app **Tailscale** (Play Store, App Store ou o site).
-2. Entre com o convite que a coordenação enviou pelo painel do Tailscale (<https://login.tailscale.com/admin>, opção "Invite users").
+2. Entre no app com a conta pessoal e aceite o convite que a coordenação enviou (pelo e-mail ou pelo link): **Accept invite**.
 3. Abra no navegador o endereço `https://...ts.net`. Dá para salvar como atalho na tela inicial ("Adicionar à tela inicial"); ele abre como um aplicativo.
 
 ### Segurança

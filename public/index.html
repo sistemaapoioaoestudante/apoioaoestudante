@@ -274,12 +274,12 @@
                 Endereço do sistema para as professoras
                 <input id="accessUrlInput" type="url" inputmode="url" placeholder="https://apoio-escola.nome-da-rede.ts.net" aria-describedby="accessUrlHelp" />
               </label>
-              <p class="hint-text" id="accessUrlHelp">É o endereço que aparece no Tailscale para o computador do sistema. Só muda se o sistema for instalado com outro nome de computador ou outra conta.</p>
+              <p class="hint-text" id="accessUrlHelp">Onde achar: no Tailscale, clique em <strong>apoio-escola</strong> e copie o <strong>Full domain</strong>. Cole aqui com <code>https://</code> na frente. Faça uma vez só: o endereço só muda se o sistema for instalado com outro nome de computador ou outra conta.</p>
               <button type="submit" class="secondary-action small-action">Salvar endereço</button>
             </form>
 
             <div class="access-actions">
-              <a class="primary-action" id="openTailscaleAdmin" href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer">
+              <a class="primary-action" id="openTailscaleAdmin" href="https://console.tailscale.com/admin/machines" target="_blank" rel="noopener noreferrer">
                 Abrir o Tailscale para compartilhar <span class="visually-hidden">(abre em nova aba)</span>
               </a>
               <button type="button" class="secondary-action" id="copyTeacherMessage">Copiar mensagem para a professora</button>
@@ -293,21 +293,26 @@
                   <li>Cadastre a professora em <strong>Professoras</strong> (o e-mail e a senha provisória do sistema).</li>
                   <li>Clique em <strong>Abrir o Tailscale para compartilhar</strong> e entre com a conta da escola.</li>
                   <li>Na lista ("Machines"), ache o computador <strong>apoio-escola</strong> (o computador onde o sistema roda — não os celulares).</li>
-                  <li>Clique nos três pontinhos (…) → <strong>Share…</strong> ("Compartilhar") → <strong>Generate &amp; copy invite link</strong> ("Gerar e copiar link de convite"). Cada link vale para <strong>uma</strong> pessoa. Se aparecer só um código, o link é <code>https://login.tailscale.com/admin/invite/</code> seguido do código.</li>
-                  <li>Clique em <strong>Copiar mensagem para a professora</strong>, cole no WhatsApp e cole o link do convite no lugar indicado.</li>
+                  <li>Clique nos três pontinhos (…) → <strong>Share…</strong> ("Compartilhar"). Escolha um jeito:
+                    <ul>
+                      <li><strong>Share via email</strong>: digite o e-mail da professora e clique em <strong>Share</strong>. O convite chega no e-mail dela.</li>
+                      <li><strong>Copy share link</strong>: clique no botão <strong>Copy share link</strong> (deixe "Reusable link" desmarcado: cada link vale para <strong>uma</strong> pessoa).</li>
+                    </ul>
+                  </li>
+                  <li>Clique em <strong>Copiar mensagem para a professora</strong> e cole no WhatsApp. Troque [COLE AQUI O LINK DO CONVITE] pelo link copiado (ou apague esse trecho, se mandou o convite por e-mail).</li>
                 </ol>
               </div>
               <div>
                 <h3 class="title-sm">2. A professora, uma única vez</h3>
                 <ol>
                   <li>Instala o app <strong>Tailscale</strong> e entra com o e-mail dela.</li>
-                  <li>Abre o link do convite <strong>com a conta dela</strong> e toca em <strong>Accept invite</strong> ("Aceitar convite"). Com a conta da escola o convite é recusado: ela já é dona do computador.</li>
+                  <li>Abre o convite (no e-mail ou no link) <strong>com a conta dela</strong> e toca em <strong>Accept invite</strong> ("Aceitar convite"). Com a conta da escola o convite é recusado: ela já é dona do computador.</li>
                   <li>Deixa o Tailscale <strong>conectado</strong> e abre o endereço do sistema no navegador.</li>
                   <li>Entra com o e-mail e a senha provisória <strong>do sistema</strong> e cria a senha dela.</li>
                 </ol>
               </div>
             </div>
-            <p class="hint-text">Professora saiu da escola? No Tailscale, em "Sharing", clique em <strong>Revoke</strong> ("Revogar") e exclua a conta dela em Professoras.</p>
+            <p class="hint-text">Professora saiu da escola? No Tailscale, abra o <strong>Share…</strong> do apoio-escola e remova o acesso dela (<strong>Revoke</strong>, "Revogar"). Depois exclua a conta dela em Professoras.</p>
           </div>
         </section>
 
