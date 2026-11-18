@@ -19,7 +19,7 @@
 ; Atualizar (instalar por cima) mantem os dados (pasta data) e o .env.
 ;
 ; Compilar:  ISCC.exe instalador\apoio-estudante.iss
-; Resultado: instalador\saida\instalar-apoio-ao-estudante.exe
+; Resultado: instalador\saida\instalar-apoio-ao-estudante-<versao>.exe
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
@@ -50,7 +50,7 @@ SetupIconFile=arte\icone.ico
 UninstallDisplayIcon={app}\windows\icone.ico
 UninstallDisplayName={#Nome}
 OutputDir=saida
-OutputBaseFilename=instalar-apoio-ao-estudante
+OutputBaseFilename=instalar-apoio-ao-estudante-{#Versao}
 Compression=lzma2/max
 SolidCompression=yes
 CloseApplications=no

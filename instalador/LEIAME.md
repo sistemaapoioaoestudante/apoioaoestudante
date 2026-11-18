@@ -1,6 +1,6 @@
 # Instalador do Windows
 
-Gera o `instalar-apoio-ao-estudante.exe`, o instalador que a escola usa.
+Gera o `instalar-apoio-ao-estudante-<versão>.exe` (ex: `instalar-apoio-ao-estudante-1.0.6.exe`), o instalador que a escola usa.
 
 ## O que ele faz
 

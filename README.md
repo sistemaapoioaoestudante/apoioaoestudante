@@ -11,7 +11,7 @@ no próprio computador ou no celular (rede privada da escola).
 
 ## Instalação na escola (recomendado)
 
-1. Baixe o `instalar-apoio-ao-estudante.exe` (página **Releases** do
+1. Baixe o `instalar-apoio-ao-estudante-<versão>.exe` (página **Releases** do
    repositório) e abra com dois cliques. O Windows pede permissão de
    administrador.
 2. Escolha **Primeira instalação na escola** (ou **Troca de computador**, para
