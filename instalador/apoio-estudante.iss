@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.6"
+#define Versao "1.0.7"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"
@@ -72,7 +72,7 @@ ptbr.GrupoExtras=Extras:
 [Tasks]
 Name: "servico"; Description: "{cm:TarefaServico}"; GroupDescription: "{cm:GrupoAcesso}"
 Name: "semsuspender"; Description: "{cm:TarefaSuspender}"; GroupDescription: "{cm:GrupoAcesso}"
-Name: "celular"; Description: "{cm:TarefaCelular}"; GroupDescription: "{cm:GrupoExtras}"; Flags: unchecked
+Name: "celular"; Description: "{cm:TarefaCelular}"; GroupDescription: "{cm:GrupoExtras}"
 Name: "atalho"; Description: "{cm:TarefaAtalho}"; GroupDescription: "{cm:GrupoExtras}"
 
 [Dirs]
@@ -126,8 +126,9 @@ Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Descripti
 Filename: "{app}\migrar.bat"; WorkingDir: "{app}"; Description: "Trazer agora os dados do computador antigo"; \
   Flags: postinstall shellexec waituntilterminated; Check: EhMigracao
 ; Primeira instalacao: configurar o celular (entrar no Tailscale com a conta da escola)
-Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Description: "Configurar agora o acesso pelo celular (Tailscale)"; \
-  Flags: postinstall shellexec unchecked waituntilterminated; Tasks: celular; Check: not EhMigracao
+; (marcado: no fim da instalacao ja abre a pagina de login do Tailscale)
+Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Description: "Ligar este computador ao Tailscale agora (abre a página de login com a conta da escola)"; \
+  Flags: postinstall shellexec waituntilterminated; Tasks: celular; Check: not EhMigracao
 Filename: "http://127.0.0.1:{#Porta}/"; Description: "Abrir o {#Nome}"; Flags: postinstall shellexec nowait
 
 [UninstallRun]
