@@ -41,8 +41,12 @@ REM Ja conectado? Pula direto para o passo 2.
 if not errorlevel 1 goto publicar
 
 echo Passo 1 de 2: entrar no Tailscale com a conta da escola.
-echo (o navegador vai abrir; use a conta da ESCOLA, nao uma pessoal)
+echo O navegador vai abrir a pagina de login: use a conta da ESCOLA,
+echo nao uma pessoal, e clique em "Connect". Esta janela espera.
+echo (Se o navegador nao abrir, copie o endereco abaixo e cole no navegador.)
 echo.
+REM O "tailscale up" so mostra o endereco; este ajudante abre o navegador
+start "" /b powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "windows\abrir-login-tailscale.ps1" -Ts "%TS%"
 "%TS%" up --hostname=apoio-escola
 if errorlevel 1 (
     echo.
