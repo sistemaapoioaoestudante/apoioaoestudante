@@ -39,6 +39,10 @@ require("./routes/dashboard").register(router);
 require("./routes/coordinators").register(router);
 require("./routes/access").register(router);
 require("./routes/backupExport").register(router);
+require("./routes/updates").register(router);
+
+// Confere se saiu versao nova (ao ligar e a cada 12 h; ver server/updates/updater.js).
+require("./updates/updater").start();
 
 // Acesso pela rede so com HTTPS (ver server/security/network.js). Se a
 // configuracao for insegura, explica e nao abre.

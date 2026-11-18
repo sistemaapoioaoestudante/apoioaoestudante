@@ -84,6 +84,7 @@ async function onLogin(user) {
   } catch (error) {
     showToast(error.message, true);
   }
+  UpdateNotice.render(); // coordenacao: aviso de versao nova (nao espera)
   // Tela inicial: painel (coordenacao) ou atendimento rapido (professora).
   // O foco vai para o titulo: a tela de login some e, sem isso, o foco caia
   // no <body> (o leitor de tela ficava sem saber onde estava).
@@ -202,6 +203,7 @@ function bindStaticEvents() {
 
   Profile.bind(); // js/profile.js
   AccessGuide.bind(); // js/accessGuide.js (acesso das professoras)
+  UpdateNotice.bind(); // js/updateNotice.js (versao nova do sistema)
   StudentHistory.bind(); // js/studentHistory.js
   AuditHistory.bind(); // js/auditHistory.js
   bindAdminEvents(); // js/adminScreens.js

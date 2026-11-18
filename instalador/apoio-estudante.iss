@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.8"
+#define Versao "1.0.9"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"
@@ -115,23 +115,26 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environmen
   ValueName: "OLLAMA_MODELS"; ValueData: "{app}\modelos-ia"; Flags: createvalueifdoesntexist
 
 [Run]
+; Atualizacao pelo proprio sistema (server/updates/updater.js): o instalador
+; roda em modo silencioso, como SYSTEM - nada de janelas nem paginas
+; (skipifsilent / not WizardSilent).
 ; Icone perto do relogio ja nesta sessao
 Filename: "powershell.exe"; Parameters: "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File ""{app}\windows\bandeja.ps1"""; \
-  Flags: runasoriginaluser nowait runhidden; Tasks: servico; Check: not EhMigracao
+  Flags: runasoriginaluser nowait runhidden; Tasks: servico; Check: (not EhMigracao) and (not WizardSilent)
 ; Troca de computador: PRIMEIRO entra no Tailscale (os dados vem do
 ; computador antigo pela rede privada), DEPOIS traz os dados. O [Run] roda
 ; nesta ordem, e cada passo espera o anterior terminar.
 Filename: "{app}\windows\configurar-celular.bat"; WorkingDir: "{app}"; Description: "Entrar no Tailscale com a conta da escola (necessário para trazer os dados)"; \
-  Flags: postinstall shellexec waituntilterminated; Check: EhMigracao
+  Flags: postinstall shellexec waituntilterminated skipifsilent; Check: EhMigracao
 Filename: "{app}\migrar.bat"; WorkingDir: "{app}"; Description: "Trazer agora os dados do computador antigo"; \
-  Flags: postinstall shellexec waituntilterminated; Check: EhMigracao
+  Flags: postinstall shellexec waituntilterminated skipifsilent; Check: EhMigracao
 ; Primeira instalacao: configurar o celular (entrar no Tailscale com a conta da escola)
 ; (marcado: no fim da instalacao abre so a pagina de login do Tailscale no
 ; navegador, sem janela preta - windows\ligar-tailscale.ps1)
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""{app}\windows\ligar-tailscale.ps1"""; \
   Description: "Ligar este computador ao Tailscale agora (abre a página de login com a conta da escola)"; \
-  Flags: postinstall runhidden nowait runasoriginaluser; Tasks: celular; Check: not EhMigracao
-Filename: "http://127.0.0.1:{#Porta}/"; Description: "Abrir o {#Nome}"; Flags: postinstall shellexec nowait
+  Flags: postinstall runhidden nowait runasoriginaluser skipifsilent; Tasks: celular; Check: not EhMigracao
+Filename: "http://127.0.0.1:{#Porta}/"; Description: "Abrir o {#Nome}"; Flags: postinstall shellexec nowait skipifsilent
 
 [UninstallRun]
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\windows\tarefa.ps1"" -Remover"; \
@@ -543,6 +546,10 @@ begin
     // Na troca de computador o servico so e criado depois de trazer os dados
     if WizardIsTaskSelected('servico') and EhMigracao then
       Rodar('powershell.exe', '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\windows\tarefa.ps1') + '" -Instalar', False);
+    // Atualizacao pelo proprio sistema: apaga a tarefa de uso unico que
+    // rodou este instalador (server/updates/updater.js)
+    if WizardSilent then
+      Rodar('schtasks.exe', '/delete /f /tn "Apoio ao Estudante - atualizar"', False);
   end;
 end;
 

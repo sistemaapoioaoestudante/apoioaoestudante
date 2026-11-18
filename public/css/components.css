@@ -463,6 +463,53 @@ dialog form {
   font-weight: 800;
 }
 
+/* ---- Aviso de versao nova (so coordenacao; js/updateNotice.js) ------------- */
+
+.update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 20px;
+  border-left: 6px solid var(--sun);
+  background: var(--sun-soft);
+}
+
+.update-banner[hidden] {
+  display: none;
+}
+
+.update-text {
+  flex: 1 1 320px;
+}
+
+.update-text p {
+  margin: 4px 0 0;
+  color: var(--ink);
+}
+
+.update-notes {
+  white-space: pre-line;
+  font-size: 0.95rem;
+}
+
+.update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.update-status {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--sun-ink);
+  font-weight: 700;
+}
+
+.update-status:empty {
+  display: none;
+}
+
 /* ---- Aviso flutuante (toast) ------------------------------------------------ */
 
 /* A "regiao" fica sempre na pagina (vazia quando nao ha aviso): o leitor de

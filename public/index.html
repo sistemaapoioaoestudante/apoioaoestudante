@@ -116,6 +116,25 @@
         <div id="toast" class="toast-region" role="status" aria-live="polite"></div>
         <div id="toastAlert" class="toast-region" role="alert"></div>
 
+        <!-- Versao nova do sistema (so coordenacao). Logica em js/updateNotice.js -->
+        <section class="panel update-banner" id="updateBanner" aria-labelledby="updateTitle" hidden>
+          <div class="update-text">
+            <h2 class="title-sm" id="updateTitle">Versão nova disponível</h2>
+            <p id="updateLine"></p>
+            <details id="updateNotesWrap">
+              <summary>O que mudou</summary>
+              <p class="update-notes" id="updateNotes"></p>
+            </details>
+          </div>
+          <div class="update-actions">
+            <button class="primary-action small-action" type="button" id="updateInstall">Atualizar agora</button>
+            <a class="secondary-action small-action" id="updateDownload" href="#" target="_blank" rel="noopener noreferrer" hidden>
+              Baixar instalador <span class="visually-hidden">(abre em nova aba)</span>
+            </a>
+          </div>
+          <p class="update-status" id="updateStatus" role="status"></p>
+        </section>
+
         <section id="quick" class="view">
           <details class="how-it-works">
             <summary><span aria-hidden="true">💡</span> Como funciona?</summary>
@@ -929,6 +948,7 @@
     <script src="js/listTools.js"></script>
     <script src="js/profile.js"></script>
     <script src="js/accessGuide.js"></script>
+    <script src="js/updateNotice.js"></script>
     <script src="js/studentHistory.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/auditHistory.js"></script>

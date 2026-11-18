@@ -64,7 +64,7 @@ before(async () => {
 
   const port = await freePort();
   base = `http://127.0.0.1:${port}`;
-  server = spawn(process.execPath, ["server/index.js"], { cwd: ROOT, env: { ...env, PORT: String(port), AI_PROVIDER: "" }, stdio: "ignore" });
+  server = spawn(process.execPath, ["server/index.js"], { cwd: ROOT, env: { ...env, PORT: String(port), AI_PROVIDER: "", UPDATE_CHECK: "0" }, stdio: "ignore" });
   // Espera o servidor subir (ate 20 s - num computador ocupado pode demorar)
   let up = false;
   for (let i = 0; i < 100 && !up; i++) {
@@ -290,6 +290,21 @@ test("endereco de acesso das professoras: so coordenacao e so https", async () =
   assert.equal(saved.status, 200);
   assert.equal(saved.data.accessUrl, "https://apoio-escola.rede.ts.net");
   assert.equal((await request("GET", "/api/access-info", { cookie: cookies.admin })).data.accessUrl, "https://apoio-escola.rede.ts.net");
+});
+
+test("atualizacao do sistema: so a coordenacao ve e pede; versao e publica", async () => {
+  const version = await request("GET", "/api/version");
+  assert.equal(version.status, 200);
+  assert.equal(version.data.version, require("../package.json").version);
+  assert.equal((await request("GET", "/api/updates")).status, 401);
+  assert.equal((await request("GET", "/api/updates", { cookie: cookies.teacher })).status, 403);
+  assert.equal((await request("POST", "/api/updates/install", { cookie: cookies.teacher, body: {} })).status, 403);
+  const info = await request("GET", "/api/updates", { cookie: cookies.admin });
+  assert.equal(info.status, 200);
+  assert.equal(info.data.current, version.data.version);
+  assert.equal(info.data.available, false, "sem conferir (UPDATE_CHECK=0), nao ha versao nova");
+  // Sem versao nova, nada e instalado
+  assert.equal((await request("POST", "/api/updates/install", { cookie: cookies.admin, body: {} })).status, 400);
 });
 
 test("troca de senha: obrigatoria sem a atual; voluntaria exige a atual", async () => {
