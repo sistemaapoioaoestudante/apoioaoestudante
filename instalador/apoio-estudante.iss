@@ -23,7 +23,7 @@
 ; ---------------------------------------------------------------------------
 
 #define Nome "Apoio ao Estudante"
-#define Versao "1.0.5"
+#define Versao "1.0.6"
 #define Porta "3000"
 #define NodeVersao "24.21.0"
 #define NodeUrl "https://nodejs.org/dist/v" + NodeVersao + "/node-v" + NodeVersao + "-x64.msi"

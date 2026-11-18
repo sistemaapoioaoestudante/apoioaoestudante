@@ -13,8 +13,14 @@ REM Passo a passo completo e como convidar cada professora:
 REM docs\acesso-remoto.md (ou "Meu perfil" da coordenacao, no sistema).
 REM ---------------------------------------------------------------------------
 
-set "TS=%ProgramFiles%\Tailscale\tailscale.exe"
-if not exist "%TS%" (
+REM O Tailscale fica em "C:\Program Files". Numa janela de 32 bits,
+REM %ProgramFiles% aponta para "Program Files (x86)"; %ProgramW6432% aponta
+REM sempre para a pasta de 64 bits. Procura nos dois.
+set "TS="
+if defined ProgramW6432 if exist "%ProgramW6432%\Tailscale\tailscale.exe" set "TS=%ProgramW6432%\Tailscale\tailscale.exe"
+if not defined TS if exist "%ProgramFiles%\Tailscale\tailscale.exe" set "TS=%ProgramFiles%\Tailscale\tailscale.exe"
+if not defined TS if exist "%SystemDrive%\Program Files\Tailscale\tailscale.exe" set "TS=%SystemDrive%\Program Files\Tailscale\tailscale.exe"
+if not defined TS (
     echo [ERRO] O Tailscale nao esta instalado neste computador.
     echo Instale em https://tailscale.com/download ou rode o instalador do
     echo Apoio ao Estudante de novo, marcando "Acesso pelo celular".
